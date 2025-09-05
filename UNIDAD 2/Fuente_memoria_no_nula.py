@@ -49,14 +49,24 @@ def Entropia_con_mem(mat_transicion,vec_esta):
     num_filas = len(mat_transicion)
     num_columnas = len(mat_transicion[0])
     for i in range(num_columnas):
-        columna = [fila[i] for fila in mat]
+        columna = [fila[i] for fila in mat_transicion]
         suma.append(ENTRO_INFO.entropia(columna,ENTRO_INFO.sacaprob(columna))*vec_esta[i])    
     
     return sum(suma)
 
-mat=[[1/2,1/3,0],[1/2,1/3,1],[0,1/3,0]]
+mat=[[1/3, 0 , 1 , 1/2,0],
+     [1/3, 0 , 0 , 0  ,0],
+     [0  , 1 , 0 , 0  ,0],
+     [1/3, 0 , 0 , 0,1/2],
+     [0, 0 , 0 , 1/2,1/2]
+    ]
 vec=Estacionario(mat,0.0001)
 for i in vec:
     print(f"{i:.2f}")
-print(vec)
+print(f"Vector estacionario{vec}")
+print(f"{3/9}")
+print(f"{1/9}")
+print(f"{1/9}")
+print(f"{2/9}")
+print(f"{2/9}")
 print(f"{Entropia_con_mem(mat,vec):.2f}")
