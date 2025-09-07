@@ -2,7 +2,7 @@ import Util
 
 alfbeto=["x","y","z"]
 prob=[0.5,0.1,0.4]
-n=3
+n=2
 alfabeto_exte,probs_exte=Util.extendida_bien(alfbeto,prob,n)
      
 print("Alfabeto:", [f"{x}" for x in alfabeto_exte])

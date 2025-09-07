@@ -89,7 +89,6 @@ def extendida_bien(alfabeto, probabilidades,n):
       fin=0
       for i,letra in enumerate(alfabeto):
           for j in range(fin,fin+len(alfabeto)**(n-1)):
-                
                 alfabeto_extendido[j]=letra+alfabeto_extendido[j]
                 probablilidades_extendido[j]=probabilidades[i]*probablilidades_extendido[j]
           fin+=len(alfabeto)**(n-1)
