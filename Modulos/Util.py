@@ -3,6 +3,8 @@ import random
 import copy
 import math
 
+from pyparsing import C
+
 #FUENTE SIN MEMORIA
 
 def valor_W(w):
@@ -22,7 +24,6 @@ def Alfabeto_y_sus_probabilidades(mensaje):
     
     probabilidades=[i/len(mensaje) for i in probabilidades]
     return alfabeto,probabilidades
-        
 
 #GENERAR MENSAJE EN BASE A UN ALFABEJO Y SUS PROBABILIDADES
 
@@ -241,3 +242,54 @@ def imprime_mat(alfabet,matt):
         # formato con 2 decimales
         valores = "  ".join(f"{x:.2f}" for x in fila)
         print(f"{alfabet[i]}  {valores}") 
+        
+        
+def es_no_singular(C1):
+    s1=set(C1)
+    return len(C1)==len(s1)
+
+def es_instantaneo(C1):
+    for i in (C1):
+        for j in range(len(C1)):
+            if (C1[j]!=i and C1[j].startswith(i)):
+                 return False
+    return True
+
+
+def es_UD(C1):
+    lista_de_S=[]
+    C1=set(C1)
+    s1=set(C1)
+    s_aux=set()
+    lista_de_S.append(s1)
+    for i in s1:
+        for j in C1:
+            if (j!=i):
+                if (j.startswith(i)):
+                    s_aux.add(j[len(i):])
+                elif (i.startswith(j)):
+                    s_aux.add(i[len(j):])
+    while( not C1.intersection(s_aux) and  s_aux not in lista_de_S):
+        lista_de_S.append(s_aux.copy())
+        s_aux.clear()    
+        for i in lista_de_S[-1]:
+            for j in s1:
+                if (j!=i):
+                    if (j.startswith(i)):
+                        s_aux.add(j[len(i):])
+                    elif (i.startswith(j)):
+                        s_aux.add(i[len(j):])
+    
+    return s_aux in lista_de_S
+def propiedades(C1):
+    if (es_no_singular(C1)):
+        if(es_UD(C1)):
+            if(es_instantaneo(C1)):
+                print("Es instantaneo")
+            else:
+                print("Es Univocamente decodificable") 
+        else:
+            print("Es no singular")
+    else:
+        print("Es bloque")
+               
