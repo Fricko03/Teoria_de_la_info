@@ -9,8 +9,8 @@ from pyparsing import C
 
 def valor_W(w):
    prob=[w,1-w]
-   info=saca_INFO(prob)
-   return  entropia(prob,info)
+   info=saca_INFO_base_2(prob)
+   return  entropia_base_2(prob,info)
 #SACAR ALFABETO PROB
 def Alfabeto_y_sus_probabilidades(mensaje):
     alfabeto=[]
@@ -25,7 +25,7 @@ def Alfabeto_y_sus_probabilidades(mensaje):
     probabilidades=[i/len(mensaje) for i in probabilidades]
     return alfabeto,probabilidades
 
-#GENERAR MENSAJE EN BASE A UN ALFABEJO Y SUS PROBABILIDADES
+#GENERAR MENSAJE EN BASE A UN ALFABEHO Y SUS PROBABILIDADES
 
 def Generador_mensaje(alfabeto,probabilidades,n):
     frecuencia_acum=[]
@@ -46,7 +46,7 @@ def Generador_mensaje(alfabeto,probabilidades,n):
 
 #####################################
 
-def saca_INFO(probs):
+def saca_INFO_base_2(probs):
     resultado=[]
     for s in probs:
         if(s==0):
@@ -55,7 +55,7 @@ def saca_INFO(probs):
             resultado.append(math.log2(1/s))
     return  resultado
 
-def entropia(lista_pro,lista_INFO):
+def entropia_base_2(lista_pro,lista_INFO):
    return  sum(s*p for s,p in zip(lista_pro,lista_INFO))
 
 ###################
@@ -155,7 +155,7 @@ def Entropia_con_mem(mat_transicion,vec_esta):
     num_columnas = len(mat_transicion[0])
     for i in range(num_columnas):
         columna = [fila[i] for fila in mat_transicion]
-        suma.append(entropia(columna,saca_INFO(columna))*vec_esta[i])    
+        suma.append(entropia_base_2(columna,saca_INFO_base_2(columna))*vec_esta[i])    
     
     return sum(suma)
 
@@ -314,14 +314,15 @@ def sum_ine_kraft(lista_pal_cod):
     suma= [r**(-i) for i in longitudes]
     return sum(suma)
 
-def a11(lista_pal_cod,lista_probs):
+def entropia_base_r(lista_pal_cod,lista_probs):
     r=len(obtener_alfabeto_codigo(lista_pal_cod))
-    info_fuente=obtener_info_generico(lista_probs,r)
+    info_fuente=obtener_info_base_r(lista_probs,r)
     return sum(s*p for s,p in zip(lista_probs,info_fuente))
 
 
-def obtener_info_generico(lista_probs,r):
-    return [math.log(1/i,r)for i in lista_probs]    
+def obtener_info_base_r(lista_probs,r):
+    
+    return [0 if i == 0 else math.log(1/i, r) for i in lista_probs]    
 
 
 
@@ -331,7 +332,7 @@ def longitud_media(lista_pal_cod,lista_probs):
 
 def is_compacto(lista_pal_cod,lista_probs):
     if (es_instantaneo(lista_pal_cod)):
-        lista_info=obtener_info_generico(lista_probs,len(obtener_alfabeto_codigo(lista_pal_cod)))
+        lista_info=obtener_info_base_r(lista_probs,len(obtener_alfabeto_codigo(lista_pal_cod)))
         longitudes=obtener_longitudes_cod(lista_pal_cod)
         i=0
         while (i<len(lista_pal_cod) and longitudes[i]<=math.ceil( lista_info[i])):
