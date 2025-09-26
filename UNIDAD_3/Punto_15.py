@@ -1,4 +1,4 @@
-from Util import is_compacto
+from Parcial.Util import is_compacto
 
 
 c9=["==","<","<=",">",">=","<>"]

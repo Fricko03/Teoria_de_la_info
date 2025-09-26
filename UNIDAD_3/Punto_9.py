@@ -1,4 +1,4 @@
-import Util
+import Parcial.Util as Util
 c9=["AA","C","B","AB","ACB"]#[")","[]","]]","([","[()]","([)]"]
 alfabeto=Util.obtener_alfabeto_codigo(c9)
 print(alfabeto )

@@ -358,3 +358,9 @@ def Generador_mensaje_en_base_alfabeto_cod(alfabeto_cod,probabilidades,n):
         mensaje_generado +=alfabeto_cod[cont]
       
     return mensaje_generado
+
+def calcula_kraf_en_base_tam(tamanios,r):
+    #r es el tamanio del alfabeto codigo
+    
+    return sum((r ** (-l) for l in tamanios))
+    

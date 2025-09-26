@@ -1,4 +1,4 @@
-from  Util import propiedades 
+from  Parcial.Util import propiedades 
 
 if __name__ == "__main__":
     c1=["011","000","010","101","001","100"]

@@ -1,4 +1,4 @@
-from Util import entropia_base_r, longitud_media
+from Parcial.Util import entropia_base_r, longitud_media
 
 
 c9=["==","<","<=",">",">=","<>"]
