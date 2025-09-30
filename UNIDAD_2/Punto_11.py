@@ -13,7 +13,7 @@ print(f"Entropia n*h(s) : {Util.entropia_base_2(prob,Util.saca_INFO_base_2(prob)
 
 print(f"Entropia 2 : {Util.entropia_base_2(probs_exte,Util.saca_INFO_base_2(probs_exte)):.2f}")
 
-alfabeto_exte,probs_exte=Util.calc_exte(alfbeto,prob,n)
+alfabeto_exte,probs_exte=Util.calc_exte(alfbeto,prob,3)
 print("Alfabeto:", [f"{x}" for x in alfabeto_exte])
 print("Probabil:", [f"{x:.2f}" for x in probs_exte])
 print(f"Entropia 3 : {Util.entropia_base_2(probs_exte,Util.saca_INFO_base_2(probs_exte)):.2f}")
@@ -30,7 +30,7 @@ print(f"Entropia n*h(s) : {Util.entropia_base_2(prob,Util.saca_INFO_base_2(prob)
 
 print(f"Entropia 2 : {Util.entropia_base_2(probs_exte,Util.saca_INFO_base_2(probs_exte)):.2f}")
 
-alfabeto_exte,probs_exte=Util.calc_exte(alfbeto,prob,n)
+alfabeto_exte,probs_exte=Util.calc_exte(alfbeto,prob,3)
 print("Alfabeto:", [f"{x}" for x in alfabeto_exte])
 print("Probabil:", [f"{x:.2f}" for x in probs_exte])
 print(f"Entropia 3 : {Util.entropia_base_2(probs_exte,Util.saca_INFO_base_2(probs_exte)):.2f}")
@@ -48,7 +48,7 @@ print(f"Entropia n*h(s) : {Util.entropia_base_2(prob,Util.saca_INFO_base_2(prob)
 
 print(f"Entropia 2 : {Util.entropia_base_2(probs_exte,Util.saca_INFO_base_2(probs_exte)):.2f}")
 
-alfabeto_exte,probs_exte=Util.calc_exte(alfbeto,prob,n)
+alfabeto_exte,probs_exte=Util.calc_exte(alfbeto,prob,3)
 print("Alfabeto:", [f"{x}" for x in alfabeto_exte])
 print("Probabil:", [f"{x:.2f}" for x in probs_exte])
 print(f"Entropia 3 : {Util.entropia_base_2(probs_exte,Util.saca_INFO_base_2(probs_exte)):.2f}")

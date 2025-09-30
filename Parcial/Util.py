@@ -3,7 +3,7 @@ import random
 import copy
 import math
 
-from pyparsing import C
+
 
 #FUENTE SIN MEMORIA
 
@@ -31,14 +31,14 @@ def Generador_mensaje(alfabeto,probabilidades,n):
     frecuencia_acum=[]
     frecuencia_acum.append(probabilidades[0])
     for i in range(1,len(probabilidades)):
-        frecuencia_acum.append(probabilidades[i]+frecuencia_acum[i-1])
-    print(frecuencia_acum)
+        frecuencia_acum.append(probabilidades[i]+frecuencia_acum[i-1]) #aca lo que hago es calcular la frec acum
+    print(frecuencia_acum) #print innecesario 
     mensaje_generado=""
     
-    for i in range(n):
+    for i in range(n):#bucle de 0 a n que se relaciona con el largo del msm
         num = random.random()
         cont=0
-        while num> frecuencia_acum[cont]:
+        while cont < len(frecuencia_acum)-1 and num> frecuencia_acum[cont]:
             cont+=1
         mensaje_generado +=alfabeto[cont]
       
@@ -103,17 +103,18 @@ def extendida_bien(alfabeto, probabilidades,n):
     #CALCULA EL VECTOR ESTACIONARIO
 def Estacionario(mat_trans,tol):
     estacionario_prev=[1/len(mat_trans)]
-    estacionario_prev*=len(mat_trans)
-    vec_estacionario=[]
-  
-    #genero el primer v1
-    for i in range(len(mat_trans)):
-        suma=0
-        for j in range(len(mat_trans[0])):
-            suma+=estacionario_prev[j]*mat_trans[i][j]
-        vec_estacionario.append(suma)
+    estacionario_prev*=len(mat_trans) #creo el v0 que es todos sus elementos equisprobables
+    vec_estacionario=[] #creo el que voy a usar en las iteraciones
     
     if (columnas_suman_1(mat_trans)):
+    #genero el primer v1 en base a v0
+        for i in range(len(mat_trans)):
+            suma=0
+            for j in range(len(mat_trans[0])):
+                suma+=estacionario_prev[j]*mat_trans[i][j]
+            vec_estacionario.append(suma)
+        
+    
         while(diferencia(estacionario_prev,vec_estacionario)>tol):
             estacionario_prev=vec_estacionario[:]
             for i in range(len(mat_trans)):
@@ -155,8 +156,7 @@ def Entropia_con_mem(mat_transicion,vec_esta):
     num_columnas = len(mat_transicion[0])
     for i in range(num_columnas):
         columna = [fila[i] for fila in mat_transicion]
-        suma.append(entropia_base_2(columna,saca_INFO_base_2(columna))*vec_esta[i])    
-    
+        suma.append(entropia_base_2(columna,saca_INFO_base_2(columna))*vec_esta[i])    #en caso de tener que calcular la entropia en otra base cambiar    
     return sum(suma)
 
 
@@ -195,7 +195,7 @@ def normalizar(matriz):
         suma = sum(matriz[i][j] for i in range(filas))  # suma de la columna j
         if suma != 0:
             for i in range(filas):
-                if (sum!=0):
+                if (suma!=0):
                     matriz[i][j] /= suma
     
 def Generador_mensaje_con_mem(alfabeto,mat_fun,long_mensaje):
@@ -212,28 +212,18 @@ def Generador_mensaje_con_mem(alfabeto,mat_fun,long_mensaje):
         num = random.random()
         cont=0
         j=alfabeto.index(mensaje_generado[i-1])
-        while num> frecuencia_acum_mat[cont][j] and cont<n :
+        while cont<n-1 and num> frecuencia_acum_mat[cont][j]:
             cont+=1
         mensaje_generado +=alfabeto[cont]
         
       
     return mensaje_generado
 
-def clasificacion_fuente(matt, tol=0.1):
+def is_mem_nula(matt, tol=0.1):
     aux=[max(fila)-min(fila) for fila in matt]
     aux=max(aux)
-    
-
-    if ((aux<tol)):
-        print("Fuente de memoria nula")
-        vec=Estacionario(matt,0.0001)
-        print(f"Entropia: {Entropia_con_mem(matt,vec)}")
-        
-    else:
-        print("Fuente con memoria")
-        vec=Estacionario(matt,0.0001)
-        print(f"Entropia: {Entropia_con_mem(matt,vec):.2f}")
-
+   
+    return aux<tol
 def imprime_mat(alfabet,matt):      
     print("   " + "  ".join(alfabet))
 
@@ -308,13 +298,9 @@ def obtener_alfabeto_codigo(lista_pal_cod):
 def obtener_longitudes_cod(lista_pal_cod):
     return [len(i)for i in lista_pal_cod]
 
-def sum_ine_kraft(lista_pal_cod):
-    r=len(obtener_alfabeto_codigo(lista_pal_cod))
-    longitudes=obtener_longitudes_cod(lista_pal_cod)
-    suma= [r**(-i) for i in longitudes]
-    return sum(suma)
 
-def entropia_base_r(lista_pal_cod,lista_probs):
+
+def  entropia_base_r(lista_pal_cod,lista_probs):
     r=len(obtener_alfabeto_codigo(lista_pal_cod))
     info_fuente=obtener_info_base_r(lista_probs,r)
     return sum(s*p for s,p in zip(lista_probs,info_fuente))
@@ -353,7 +339,7 @@ def Generador_mensaje_en_base_alfabeto_cod(alfabeto_cod,probabilidades,n):
     for i in range(n):
         num = random.random()
         cont=0
-        while num> frecuencia_acum[cont]:
+        while cont < len(frecuencia_acum)-1 and num> frecuencia_acum[cont]:
             cont+=1
         mensaje_generado +=alfabeto_cod[cont]
       
@@ -364,3 +350,17 @@ def calcula_kraf_en_base_tam(tamanios,r):
     
     return sum((r ** (-l) for l in tamanios))
     
+    
+def sum_ine_kraft(lista_pal_cod):
+    r=len(obtener_alfabeto_codigo(lista_pal_cod))
+    longitudes=obtener_longitudes_cod(lista_pal_cod)
+    suma= [r**(-i) for i in longitudes]
+    return sum(suma)
+
+
+m=[[1/3, 0, 1, 1/2, 0],[1/3, 0, 0, 0, 0],[0, 1, 0, 0, 0],[1/3, 0, 0, 0, 1/2],[0 ,0 ,0 ,1/2 ,1/2]]
+
+esta=Estacionario(m,0.001)
+print(esta)
+if (esta!=[]):
+    print(Entropia_con_mem(m,esta))
