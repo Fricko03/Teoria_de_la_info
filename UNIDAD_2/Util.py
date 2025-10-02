@@ -112,8 +112,8 @@ def Estacionario(mat_trans,tol):
         for j in range(len(mat_trans[0])):
             suma+=estacionario_prev[j]*mat_trans[i][j]
         vec_estacionario.append(suma)
-    print(estacionario_prev)
-    print(vec_estacionario)
+    # print(estacionario_prev)
+    # print(vec_estacionario)
     if (columnas_suman_1(mat_trans)):
         while(diferencia(estacionario_prev,vec_estacionario)>tol):
             estacionario_prev=vec_estacionario[:]
@@ -122,7 +122,7 @@ def Estacionario(mat_trans,tol):
                 for j in range(len(mat_trans[0])):
                     suma+=estacionario_prev[j]*mat_trans[i][j]
                 vec_estacionario[i]=suma
-            print(vec_estacionario)
+            # print(vec_estacionario)
     else:
         print("La matriz de transicion esta mal hecha")
 

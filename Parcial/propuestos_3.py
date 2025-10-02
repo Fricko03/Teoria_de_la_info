@@ -1,54 +1,60 @@
 from Util import *
 
 
-# alf=["010","101","000","111"]
-# propiedades(alf)
-# alf=["111","000","00","11"]
+# # alf=["010","101","000","111"]
+# # propiedades(alf)
+# # alf=["111","000","00","11"]
 
-# propiedades(alf)
-# print()
+# # propiedades(alf)
+# # print()
+# # A = ["000", "001", "010", "011", "100", "101"]
+# # B = ["0", "01", "011", "0111", "01111", "011111"]
+# # C = ["0", "10", "110", "1110", "11110", "111110"]
+# # D = ["0", "10", "110", "1110", "1011", "1101"]
+# # E = ["0", "10", "1100", "1101", "1110", "1111"]
+# # F = ["0", "100", "101", "110", "111", "001"]
+# # propiedades(A)
+# # propiedades(B)
+# # propiedades(C)
+# # propiedades(D)
+# # propiedades(E)
+# # propiedades(F)
+
+# # print("-----------------10---------------------")
+# # C1 = ["110", "01", "111", "00", "10"]
+# # C2 = ["000", "010", "001", "101", "11"]
+# # C3 = ["0", "1111", "10", "1110", "110"]
+# # C4 = ["0", "111", "10", "11", "110"]
+
+# # codigos=[C1,C2,C3,C4]
+# # for i in codigos:
+# #     if (sum_ine_kraft(i)<=1):
+# #         print("cumple",sum_ine_kraft(i))
+# #     else:
+# #         print("no cumpleS")
+
+# # for i in codigos:
+# #     lon=obtener_longitudes_cod(i)
+# #     print(i)
+# #     print(lon)
+
+
 # A = ["000", "001", "010", "011", "100", "101"]
 # B = ["0", "01", "011", "0111", "01111", "011111"]
 # C = ["0", "10", "110", "1110", "11110", "111110"]
 # D = ["0", "10", "110", "1110", "1011", "1101"]
 # E = ["0", "10", "1100", "1101", "1110", "1111"]
 # F = ["0", "100", "101", "110", "111", "001"]
-# propiedades(A)
-# propiedades(B)
-# propiedades(C)
-# propiedades(D)
-# propiedades(E)
-# propiedades(F)
 
-# print("-----------------10---------------------")
-# C1 = ["110", "01", "111", "00", "10"]
-# C2 = ["000", "010", "001", "101", "11"]
-# C3 = ["0", "1111", "10", "1110", "110"]
-# C4 = ["0", "111", "10", "11", "110"]
+# cod=[A,B,C,D,E,F]
+# prob=[1/2,1/4,1/16,1/16,1/16,1/16]
+# for n,i in enumerate(cod):
+#     if (es_instantaneo(i)):
+#         print(n,longitud_media(i,prob))
 
-# codigos=[C1,C2,C3,C4]
-# for i in codigos:
-#     if (sum_ine_kraft(i)<=1):
-#         print("cumple",sum_ine_kraft(i))
-#     else:
-#         print("no cumpleS")
-
-# for i in codigos:
-#     lon=obtener_longitudes_cod(i)
-#     print(i)
-#     print(lon)
+##r3ehecho
 
 
-A = ["000", "001", "010", "011", "100", "101"]
-B = ["0", "01", "011", "0111", "01111", "011111"]
-C = ["0", "10", "110", "1110", "11110", "111110"]
-D = ["0", "10", "110", "1110", "1011", "1101"]
-E = ["0", "10", "1100", "1101", "1110", "1111"]
-F = ["0", "100", "101", "110", "111", "001"]
 
-cod=[A,B,C,D,E,F]
-prob=[1/2,1/4,1/16,1/16,1/16,1/16]
-for n,i in enumerate(cod):
-    if (es_instantaneo(i)):
-        print(n,longitud_media(i,prob))
-
+cod=["a","ba","bb","cba","cbb","cab","bc"]
+propiedades(cod)
