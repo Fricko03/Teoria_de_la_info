@@ -358,10 +358,19 @@ def sum_ine_kraft(lista_pal_cod):
     suma= [r**(-i) for i in longitudes]
     return sum(suma)
 
+# ---------------------------------------SEGUNDO PARCIAL----------------------------------------------------
+#ver si debo extender el codigo de codificacion antes de hacerlo 
+def primerteoremaShanon(probabilidad,codigoextendido,N):
+    alfabeto_vacio=[""]*len(probabilidad)
+    _,probexte=extendida_bien(alfabeto_vacio,probabilidad,N)
+    longitud=longitud_media(codigoextendido,probexte)
+    entropia=entropia_base_r(codigoextendido,probabilidad)
+    print("Longitud",longitud)
+    print("Entropia",entropia)
+    return entropia<=longitud/N<=(entropia+1/N)
 
-# m=[[1/3, 0, 1, 1/2, 0],[1/3, 0, 0, 0, 0],[0, 1, 0, 0, 0],[1/3, 0, 0, 0, 1/2],[0 ,0 ,0 ,1/2 ,1/2]]
 
-# esta=Estacionario(m,0.001)
-# print(esta)
-# if (esta!=[]):
-#     print(Entropia_con_mem(m,esta))
+def calculo_redundancia_rendimiento(probabilidades,codificacion):
+    entropia=entropia_base_r(codificacion,probabilidades)
+    logitud=longitud_media(codificacion,probabilidades)
+    return entropia/logitud,(1-entropia/logitud)
