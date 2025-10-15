@@ -1,4 +1,5 @@
 #Importacion de librerias
+from operator import le
 import random
 import copy
 import math
@@ -374,3 +375,69 @@ def calculo_redundancia_rendimiento(probabilidades,codificacion):
     entropia=entropia_base_r(codificacion,probabilidades)
     logitud=longitud_media(codificacion,probabilidades)
     return entropia/logitud,(1-entropia/logitud)
+
+
+def huffman_binario(probs):
+    items = [[p, [i]] for i, p in enumerate(probs)]
+    codigos = [''] * len(probs)
+    while len(items)>1:
+        items = sorted(items, key=lambda x: x[0],reverse=True)
+        menor_1=items.pop()
+        menor_2=items.pop()
+        for i in menor_1[1]:
+            codigos[i] = '0' + codigos[i]
+        
+        for i in menor_2[1]:
+            codigos[i] = '1' + codigos[i]
+            
+        items.append([menor_2[0]+menor_1[0],menor_1[1]+menor_2[1]])
+
+    return codigos
+
+def _shanon_rec_bin(items, cods):
+    n=len(items)
+     
+    if(n>1):
+        prob_tot=sum(i[0] for i in items)
+        acum=0
+        resto=0
+        i=0
+        while (i<=n-1 and acum<prob_tot/2):
+            acum+=items[i][0]
+            i+=1
+        for j in range(i-1,n):
+            resto+=items[j][0]
+
+        if acum>resto:
+            i=i-1
+        cod_1= items[0:i]
+        cod_0=items[i:]
+        for j in cod_0:
+            cods[j[1]]=cods[j[1]]+'0'
+           
+        for j in cod_1:
+            cods[j[1]]=cods[j[1]]+'1'
+           
+        _shanon_rec_bin(cod_0,cods)
+        _shanon_rec_bin(cod_1,cods)
+    
+    
+
+    
+def shanon_binario(probs):
+    items = [[p, i] for i, p in enumerate(probs)]
+    codigos = [''] * len(probs)
+    items = sorted(items, key=lambda x: x[0],reverse=True)
+    _shanon_rec_bin(items,codigos)
+    return codigos
+
+# 15. Implementar funciones en Python que reciban como parámetros: una cadena de
+# caracteres que contenga un alfabeto fuente y una lista de cadenas de caracteres que
+# almacena una codificación en el alfabeto binario, y resuelvan lo siguiente:
+# a. Dada una cadena de caracteres con un mensaje escrito en el alfabeto fuente,
+# devolver una secuencia de bytes (bytearray) que contenga el mensaje codificado.
+# b. Dada una secuencia de bytes, decodificar y retornar el mensaje original.
+# Sugerencia: manipular el mensaje codificado como una cadena de caracteres de unos y
+# ceros, tanto para codificar como para decodificar, y realizar las conversiones entre binarios
+# y enteros con las funciones de casteo correspondientes.
+

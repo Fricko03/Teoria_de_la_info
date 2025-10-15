@@ -19,3 +19,8 @@ c4=["11","001","000","10","01"]
 vec=[c1,c2,c3,c4]
 for i in vec:
     print(calculo_redundancia_rendimiento(probs,i))
+    
+mensaje="ABCDABCBDCBAAABBBCBCBABADBCBABCBDBCCCAAABB"
+alf,prob=Alfabeto_y_sus_probabilidades(mensaje)
+print(alf)
+print(prob)
