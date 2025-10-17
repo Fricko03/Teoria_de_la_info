@@ -1,5 +1,5 @@
 #Importacion de librerias
-from operator import le
+
 import random
 import copy
 import math
@@ -441,3 +441,276 @@ def shanon_binario(probs):
 # ceros, tanto para codificar como para decodificar, y realizar las conversiones entre binarios
 # y enteros con las funciones de casteo correspondientes.
 
+    
+    
+def codificacion_binaria(alfabeto_fuente,codificacion,mensaje):
+    cadena=bytearray()
+    cadena_str="" #estos tres primero que pongo son para ver cuanto residuo tengo
+    dicionario_codificacion=dict(zip(alfabeto_fuente,codificacion))
+    for i in mensaje:
+        cadena_str+=dicionario_codificacion[i]
+    resto=(8-(len(cadena_str)+3)%8)%8
+    if resto!=0:
+        cadena_str+="0"*(resto)
+    resto=bin(resto)[2:].zfill(3)
+    cadena_str=resto+cadena_str
+    for i in range(0,len(cadena_str),8):
+        cadena.append(int(cadena_str[i:i+8],2))
+    return cadena   
+    
+def decodificacion_binaria(alfabeto_fuente,codificacion,mensaje_codificado):
+    cadena=""
+    mensaje_decodificado=""
+    
+    
+    for i in mensaje_codificado:
+        byte=bin(i)[2:].zfill(8)
+    
+        cadena+=str(byte)
+    resto = int(cadena[:3], 2)
+    cadena=cadena[3:]
+    if resto>0:
+        cadena=cadena[:-resto]
+    while(len(cadena)>0):
+        i=0 
+        while(not cadena.startswith(codificacion[i])):
+            i+=1
+        mensaje_decodificado+=alfabeto_fuente[i]
+        cadena = cadena[len(codificacion[i]):]
+
+    return mensaje_decodificado        
+        
+
+def imprimir_bytearray_en_binario(datos_bytes):
+    
+    cadena_binaria = ""
+    for byte_val in datos_bytes:
+       
+        octeto = bin(byte_val)[2:].zfill(8)
+        cadena_binaria += octeto
+    return cadena_binaria
+
+## me da el n de N:1
+def calculo_de_compresion(mensaje,mensaje_codificado):
+    
+    return len(mensaje.encode('utf-8'))/len(mensaje_codificado)
+
+def codificacion_en_archivo(nombre_archivo,alfabeto,probabilidades,mensaje):
+    codificacion=huffman_binario(probabilidades)
+    mensaje_codificado=codificacion_binaria(alfabeto,codificacion,mensaje)
+    try:
+        # Usamos 'wb' (write binary) para escritura binaria
+        with open(nombre_archivo, 'wb') as archivo:
+            # Escribir el contenido del bytearray directamente
+            archivo.write(mensaje_codificado)
+        
+        print(f"Bytearray almacenado con éxito en '{nombre_archivo}'.")
+        return codificacion
+    except IOError as e:
+        print(f"Error al escribir el archivo: {e}")
+
+def decodificar_desde_archivo(nombre_archivo,alfabeto,codificacion):
+    
+    try:
+       
+        with open(nombre_archivo, 'rb') as archivo:
+           
+            mensaje_codificado = archivo.read()
+            
+            # Convertir el objeto 'bytes' a 'bytearray'
+            mensaje_codificado = bytearray(mensaje_codificado)
+        
+        print(f"Datos leídos con éxito de '{nombre_archivo}'.")
+        return decodificacion_binaria(alfabeto,codificacion,mensaje_codificado)
+    
+    except IOError as e:
+        print(f"Error al leer el archivo: {e}")
+        return None
+    
+def RLC(mensaje):
+    secuencia=bytearray()
+    if len(mensaje)>0:
+       i = 0
+       N = len(mensaje)
+       MAX = 255 
+       while i < N:
+           caracter_actual = mensaje[i]
+           count = 1
+           j = i + 1
+
+       
+           while j < N and mensaje[j] == caracter_actual and count < MAX:
+               count += 1
+               j += 1
+           
+         
+           try:
+               ascii_val = ord(caracter_actual) 
+           except TypeError:
+               
+               raise ValueError("El mensaje contiene caracteres no válidos para la codificación ASCII.")
+           
+           
+           secuencia.append(ascii_val) 
+           
+           
+           secuencia.append(count)
+           
+           
+           i = j 
+
+    return secuencia
+
+
+
+import math
+
+
+
+def Hamming_errores_soluciones(codificacion_binaria):
+   
+    num_codigos = len(codificacion_binaria)
+    if num_codigos < 2:
+        return 0,0,0
+
+    
+    min = float('inf')
+
+   
+    for i in range(num_codigos):
+        
+        for j in range(i + 1, num_codigos):
+            
+            codigo_A = codificacion_binaria[i]
+            codigo_B = codificacion_binaria[j]
+            
+            # Calcular la distancia entre el par
+            distancia_actual =0
+            for bit_a,bit_b in zip(codigo_A,codigo_B):
+                if bit_a!=bit_b:
+                    distancia_actual+=1
+            
+            # Actualizar la distancia mínima
+            if distancia_actual < min:
+                min = distancia_actual
+
+    
+    errores_detectables = min - 1
+    
+    
+    errores_corregibles = math.floor((min - 1) / 2)
+    
+    
+    if errores_detectables < 0: errores_detectables = 0
+    if errores_corregibles < 0: errores_corregibles = 0
+
+    return min,errores_detectables,errores_corregibles
+
+
+def paridad_caracter(carat):#par
+    
+    ascii_val = ord(carat)
+    cant_unos = ascii_val.bit_count()
+    if cant_unos%2==0:
+        ascii_val=ascii_val<<1
+    else:
+        ascii_val=ascii_val<<1|1
+    return ascii_val
+
+def verificacion(byte):
+    total_de_unos = byte.bit_count()
+    if total_de_unos % 2 == 0:
+         return True  # La regla (TOTAL PAR) se cumplió. Todo bien.
+    else:
+        return False # La regla (TOTAL PAR) se ROMPIÓ. Hubo error.
+    
+def codificar_mensaje_con_paridad(mensaje):
+    
+    mensaje_codificado_paridad = bytearray()
+    matriz=[[0]*8]
+    for caracter in mensaje:
+        # Usar la función de paridad para obtener el byte de 8 bits (entero 0-255)
+        byte_con_paridad = paridad_caracter(caracter)
+        cadena_binaria = bin(byte_con_paridad)[2:].zfill(8)
+        fila_de_bits = [int(bit) for bit in cadena_binaria]
+        matriz.append(fila_de_bits)
+        
+    for j in range(8):
+        cant_unos=0
+        for i in range(1,len(matriz)):
+            if matriz[i][j]==1:
+                cant_unos+=1
+        if  cant_unos % 2 != 0:
+            matriz[0][j]=1  
+            
+    for fila in matriz:
+        
+        bin_str = "".join(map(str, fila))
+
+        byte_val = int(bin_str, 2)
+        
+        mensaje_codificado_paridad.append(byte_val)
+    return mensaje_codificado_paridad
+
+# NOTA: Asume que bits_a_caracter(bits_lista) está definida para convertir 7 bits a un carácter.
+
+def decodificar_y_corregir_paridad(mensaje_codificado_bytes):
+   
+    
+
+   
+    matriz_recibida = []
+    for byte_val in mensaje_codificado_bytes:
+       
+        bits = [int(b) for b in bin(byte_val)[2:].zfill(8)]
+        matriz_recibida.append(bits)
+
+
+    
+    filas_con_error = []
+    cols_con_error = [] 
+    for i in range(len(matriz_recibida)):
+        
+        paridad_recibida = matriz_recibida[i][7]
+        total_unos = sum(matriz_recibida[i][:7])
+        lpc_calculado = 1 if total_unos % 2 != 0 else 0
+        
+        if lpc_calculado != paridad_recibida:
+            filas_con_error.append(i)
+
+   
+    for j in range(8):
+        
+        paridad_recibida = matriz_recibida[0][j]
+        total_unos = sum(matriz_recibida[i][j] for i in range(1, len(matriz_recibida)))
+        vpc_calculado = 1 if total_unos % 2 != 0 else 0
+        if vpc_calculado != paridad_recibida:
+            cols_con_error.append(j)
+
+    
+    mensaje_original = ""
+    if len(filas_con_error) == 1 and len(cols_con_error) == 1:
+        fila_err = filas_con_error[0]
+        col_err = cols_con_error[0]
+
+        matriz_recibida[fila_err][col_err] ^= 1
+        print("Error único detectado y corregido.")
+
+    elif len(filas_con_error) == 0 and len(cols_con_error) == 0:
+        pass # No se hace nada, el mensaje se acepta tal cual.
+        
+    
+    else:
+
+        print("Error múltiple o no localizable. Mensaje descartado.")
+        return "" # Devolver cadena vacía
+    
+    for i in range(1, len(matriz_recibida)):
+        # Tomar los 7 bits de datos
+        bits_datos = matriz_recibida[i][:7]
+        bin_str = "".join(map(str, bits_datos))
+        mensaje_original+=chr(int(bin_str, 2))
+            
+            
+    
+    return mensaje_original
