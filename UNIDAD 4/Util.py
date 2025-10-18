@@ -563,7 +563,20 @@ def RLC(mensaje):
 
 
 
-import math
+def RLC_to_string(secuencia_RLC):
+    
+           
+    resultado = []
+    
+    
+    for i in range(0, len(secuencia_RLC), 2):
+        
+        ascii_val = secuencia_RLC[i]
+        caracter = chr(ascii_val)
+        count = secuencia_RLC[i + 1]
+        resultado.append(caracter + str(count))
+        
+    return "".join(resultado)
 
 
 

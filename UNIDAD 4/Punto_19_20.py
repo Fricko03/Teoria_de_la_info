@@ -7,3 +7,6 @@ print(calculo_de_compresion(mensaje_1,RLC(mensaje_1)))
 print(calculo_de_compresion(mensaje_2,RLC(mensaje_2)))
 print(calculo_de_compresion(mensaje_3,RLC(mensaje_3)))
 
+print(RLC_to_string(RLC(mensaje_1)))
+print(RLC_to_string(RLC(mensaje_2)))
+print(RLC_to_string(RLC(mensaje_3)))
