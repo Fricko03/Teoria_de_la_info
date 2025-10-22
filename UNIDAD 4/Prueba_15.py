@@ -3,7 +3,7 @@ ALFABETO_LISTA = [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'I', 'O', 'R', 'S']
 # Codificación ajustada a la longitud del alfabeto (ejemplo de 4 bits para simplicidad)
 CODIFICACION_LISTA = ["0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010"]
 
-MENSAJE_ORIGINAL = "DEBES CODIFICAR"
+MENSAJE_ORIGINAL = "DEBES CODIFICARRRRRRRR"
 
 print(f"Alfabeto Fuente (Lista): {ALFABETO_LISTA}")
 print(f"Mensaje Original: '{MENSAJE_ORIGINAL}'")

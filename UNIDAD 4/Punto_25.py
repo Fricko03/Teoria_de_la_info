@@ -66,5 +66,9 @@ for fila in matriz:
         byte_val = int(fila, 2)
         
         mensaje.append(byte_val)
-print(decodificar_y_corregir_paridad(mensaje))
+mensaje="CASA"
+mensajecod=codificar_mensaje_con_paridad(mensaje)
+
+print(mensajecod)
+print(decodificar_y_corregir_paridad(mensajecod))
     

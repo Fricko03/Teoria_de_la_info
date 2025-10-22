@@ -4,6 +4,8 @@ import random
 import copy
 import math
 
+from numpy import info
+
 
 
 #FUENTE SIN MEMORIA
@@ -24,6 +26,8 @@ def Alfabeto_y_sus_probabilidades(mensaje):
             probabilidades[alfabeto.index(c)] += 1
     
     probabilidades=[i/len(mensaje) for i in probabilidades]
+    ordena = sorted(zip(alfabeto, probabilidades))
+    alfabeto, probabilidades = map(list, zip(*ordena))
     return alfabeto,probabilidades
 
 #GENERAR MENSAJE EN BASE A UN ALFABEHO Y SUS PROBABILIDADES
@@ -431,55 +435,80 @@ def shanon_binario(probs):
     _shanon_rec_bin(items,codigos)
     return codigos
 
-# 15. Implementar funciones en Python que reciban como parámetros: una cadena de
-# caracteres que contenga un alfabeto fuente y una lista de cadenas de caracteres que
-# almacena una codificación en el alfabeto binario, y resuelvan lo siguiente:
-# a. Dada una cadena de caracteres con un mensaje escrito en el alfabeto fuente,
-# devolver una secuencia de bytes (bytearray) que contenga el mensaje codificado.
-# b. Dada una secuencia de bytes, decodificar y retornar el mensaje original.
-# Sugerencia: manipular el mensaje codificado como una cadena de caracteres de unos y
-# ceros, tanto para codificar como para decodificar, y realizar las conversiones entre binarios
-# y enteros con las funciones de casteo correspondientes.
+
 
     
     
-def codificacion_binaria(alfabeto_fuente,codificacion,mensaje):
-    cadena=bytearray()
-    cadena_str="" #estos tres primero que pongo son para ver cuanto residuo tengo
-    dicionario_codificacion=dict(zip(alfabeto_fuente,codificacion))
-    for i in mensaje:
-        cadena_str+=dicionario_codificacion[i]
-    resto=(8-(len(cadena_str)+3)%8)%8
-    if resto!=0:
-        cadena_str+="0"*(resto)
-    resto=bin(resto)[2:].zfill(3)
-    cadena_str=resto+cadena_str
-    for i in range(0,len(cadena_str),8):
-        cadena.append(int(cadena_str[i:i+8],2))
-    return cadena   
+def codificacion_binaria(alfabeto_fuente, codificacion, mensaje):
+    cadena = bytearray()
+    cadena_str = "" 
+    dicionario_codificacion = dict(zip(alfabeto_fuente, codificacion))
     
-def decodificacion_binaria(alfabeto_fuente,codificacion,mensaje_codificado):
-    cadena=""
-    mensaje_decodificado=""
+    
+    for i in mensaje:
+        cadena_str += dicionario_codificacion[i]
+        
+    # Calcular el 'resto' necesario para que el total de bits de datos + resto
+    # sea múltiplo de 8, dejando espacio para 1 byte (8 bits) del marcador de 'resto'.
+    # La nueva fórmula es: (8 - (len(cadena_str) + 8) % 8) % 8
+    # En esencia, queremos que len(cadena_str) + 8 + resto sea un múltiplo de 8.
+    resto = (8 - (len(cadena_str) + 8) % 8) % 8
+    
+
+    if resto != 0:
+        cadena_str += "0" * resto
+        
+  
+    resto_binario = bin(resto)[2:].zfill(8)
+    
+    
+    cadena_str = resto_binario + cadena_str
+    
+
+    for i in range(0, len(cadena_str), 8):
+        # Tomar bloques de 8 bits y convertirlos a un entero, luego agregarlo al bytearray
+        cadena.append(int(cadena_str[i:i+8], 2))
+        
+    return cadena 
+
+
+
+def decodificacion_binaria(alfabeto_fuente, codificacion, mensaje_codificado):
+    cadena = ""
+    mensaje_decodificado = ""
     
     
     for i in mensaje_codificado:
-        byte=bin(i)[2:].zfill(8)
-    
-        cadena+=str(byte)
-    resto = int(cadena[:3], 2)
-    cadena=cadena[3:]
-    if resto>0:
-        cadena=cadena[:-resto]
-    while(len(cadena)>0):
-        i=0 
-        while(not cadena.startswith(codificacion[i])):
-            i+=1
-        mensaje_decodificado+=alfabeto_fuente[i]
-        cadena = cadena[len(codificacion[i]):]
-
-    return mensaje_decodificado        
         
+        byte = bin(i)[2:].zfill(8)
+        cadena += str(byte)
+        
+   
+    resto = int(cadena[:8], 2)
+    
+    
+    cadena = cadena[8:]
+    
+    
+    if resto > 0:
+        cadena = cadena[:-resto]
+        
+ 
+    dicionario_decodificacion = dict(zip(codificacion, alfabeto_fuente))
+    
+    while(len(cadena)>0):
+            i=0 
+            while(not cadena.startswith(codificacion[i])): # Buscar el código que coincide
+                i+=1
+            mensaje_decodificado+=alfabeto_fuente[i]
+            cadena = cadena[len(codificacion[i]):] # Cortar la cadena
+
+    
+        
+        
+
+    return mensaje_decodificado
+
 
 def imprimir_bytearray_en_binario(datos_bytes):
     
@@ -671,59 +700,120 @@ def decodificar_y_corregir_paridad(mensaje_codificado_bytes):
    
     
 
-   
+    mensaje_original = ""
     matriz_recibida = []
     for byte_val in mensaje_codificado_bytes:
        
         bits = [int(b) for b in bin(byte_val)[2:].zfill(8)]
         matriz_recibida.append(bits)
-
-
     
-    filas_con_error = []
-    cols_con_error = [] 
-    for i in range(len(matriz_recibida)):
-        
-        paridad_recibida = matriz_recibida[i][7]
-        total_unos = sum(matriz_recibida[i][:7])
-        lpc_calculado = 1 if total_unos % 2 != 0 else 0
-        
-        if lpc_calculado != paridad_recibida:
-            filas_con_error.append(i)
-
-   
-    for j in range(8):
-        
-        paridad_recibida = matriz_recibida[0][j]
-        total_unos = sum(matriz_recibida[i][j] for i in range(1, len(matriz_recibida)))
-        vpc_calculado = 1 if total_unos % 2 != 0 else 0
-        if vpc_calculado != paridad_recibida:
-            cols_con_error.append(j)
-
-    
-    mensaje_original = ""
-    if len(filas_con_error) == 1 and len(cols_con_error) == 1:
-        fila_err = filas_con_error[0]
-        col_err = cols_con_error[0]
-
-        matriz_recibida[fila_err][col_err] ^= 1
-        print("Error único detectado y corregido.")
-
-    elif len(filas_con_error) == 0 and len(cols_con_error) == 0:
-        pass # No se hace nada, el mensaje se acepta tal cual.
-        
-    
+    # Se suman los bits de paridad vertical (columna 7) de las filas de datos (desde la fila 1)
+    suma_col = sum(matriz_recibida[i][7] for i in range(len(matriz_recibida)))
+ 
+    if sum(matriz_recibida[0])%2!=0 or (suma_col%2!=0 ):
+        print("Error en pariedad cruzada se descarta el mensaje por protocolo de paridad.")
     else:
+        filas_con_error = []
+        cols_con_error = [] 
+        for i in range(len(matriz_recibida)):
+            
+            paridad_recibida = matriz_recibida[i][7]
+            total_unos = sum(matriz_recibida[i][:7])
+            lpc_calculado = 1 if total_unos % 2 != 0 else 0
+            
+            if lpc_calculado != paridad_recibida:
+                filas_con_error.append(i)
 
-        print("Error múltiple o no localizable. Mensaje descartado.")
-        return "" # Devolver cadena vacía
     
-    for i in range(1, len(matriz_recibida)):
-        # Tomar los 7 bits de datos
-        bits_datos = matriz_recibida[i][:7]
-        bin_str = "".join(map(str, bits_datos))
-        mensaje_original+=chr(int(bin_str, 2))
+        for j in range(8):
             
+            paridad_recibida = matriz_recibida[0][j]
+            total_unos = sum(matriz_recibida[i][j] for i in range(1, len(matriz_recibida)))
+            vpc_calculado = 1 if total_unos % 2 != 0 else 0
+            if vpc_calculado != paridad_recibida:
+                cols_con_error.append(j)
+
+        
+        
+        if len(filas_con_error) == 1 and len(cols_con_error) == 1:
+            fila_err = filas_con_error[0]
+            col_err = cols_con_error[0]
+
+            matriz_recibida[fila_err][col_err] ^= 1
+            print("Error único detectado y corregido.")
+
+        elif len(filas_con_error) == 0 and len(cols_con_error) == 0:
+            pass # No se hace nada, el mensaje se acepta tal cual.
             
-    
+        
+        else:
+
+            print("Error múltiple o no localizable. Mensaje descartado.")
+            return "" # Devolver cadena vacía
+        
+        for i in range(1, len(matriz_recibida)):
+            # Tomar los 7 bits de datos
+            bits_datos = matriz_recibida[i][:7]
+            bin_str = "".join(map(str, bits_datos))
+            mensaje_original+=chr(int(bin_str, 2))
+                
+                
+        
     return mensaje_original
+
+def normalizar_por_fila(matriz):
+
+    for i in range(len(matriz)):
+        suma_fila = sum(matriz[i])
+        if suma_fila != 0:
+            for j in range(len(matriz[i])):
+                matriz[i][j] /= suma_fila
+
+def mat_canal(entrada, salida):
+    alf_entrada = sorted(list(set(entrada)))
+    alf_salida = sorted(list(set(salida)))
+    map_entrada = {simbolo: i for i, simbolo in enumerate(alf_entrada)}
+    map_salida = {simbolo: i for i, simbolo in enumerate(alf_salida)}
+    mat = [[0] * len(alf_salida) for _ in range(len(alf_entrada))]
+    for i in range(len(entrada)):
+        idx_entrada = map_entrada[entrada[i]]
+        idx_salida = map_salida[salida[i]]
+        mat[idx_entrada][idx_salida] += 1
+    normalizar_por_fila(mat)
+    return mat
+
+
+def Prob_de_b(probs_priori,probs_canal):
+    probs_b=[0]*len(probs_canal[0])
+    for j in range (len(probs_canal[0])):
+        for i in range(len(probs_priori)):
+            probs_b[j]+=probs_priori[i]*probs_canal[i][j]
+    return probs_b
+
+def Prob_posteriori(probs_priori,probs_canal):
+    mat=[[0] * len(probs_canal[0]) for _ in range(len(probs_priori))]
+    probs_b=Prob_de_b(probs_priori,probs_canal)
+    for i in range (len(probs_canal)):
+        for j in range(len(probs_canal[0])):
+            mat[i][j]=(probs_canal[i][j]*probs_priori[i])/probs_b[j]
+           
+   
+    return mat
+
+def Prob_simultaneo(probs_priori,probs_canal):
+     mat=[[0] * len(probs_canal[0]) for _ in range(len(probs_priori))]
+     
+     for i in range (len(probs_canal)):
+        for j in range(len(probs_canal[0])):
+            mat[i][j]=(probs_canal[i][j]*probs_priori[i])
+     return mat
+
+def entopia_posteriori(probs_priori,probs_canal):
+    entropia=[]
+    probs_posteriori=Prob_posteriori(probs_priori,probs_canal)
+    for i in range(len(probs_posteriori[0])):
+         columna = [fila[i] for fila in probs_posteriori]
+         entropia.append(entropia_base_2(columna,saca_INFO_base_2(columna)))
+    
+    return entropia
+     
