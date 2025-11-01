@@ -1,5 +1,6 @@
 #Importacion de librerias
 
+from ast import Return
 import random
 import copy
 import math
@@ -795,8 +796,10 @@ def Prob_posteriori(probs_priori,probs_canal):
     probs_b=Prob_de_b(probs_priori,probs_canal)
     for i in range (len(probs_canal)):
         for j in range(len(probs_canal[0])):
-            mat[i][j]=(probs_canal[i][j]*probs_priori[i])/probs_b[j]
-           
+            if (probs_b[j]!=0):
+                mat[i][j]=(probs_canal[i][j]*probs_priori[i])/probs_b[j]
+            else:
+                mat[i][j]=0
    
     return mat
 
@@ -816,4 +819,69 @@ def entopia_posteriori(probs_priori,probs_canal):
          entropia.append(entropia_base_2(columna,saca_INFO_base_2(columna)))
     
     return entropia
-     
+def entropia_perdida(probs_priori,probs_canal):
+    entropia =0
+    
+    prob_simultanea=Prob_simultaneo(probs_priori,probs_canal)
+    # for i in range(len(mat)):
+    #     entropia+=prob_salida[i]+entropi_post[i] 
+    for i in range(len(probs_canal)):
+        for j in range(len(probs_canal[0])):
+            prob=prob_simultanea[i][j]
+            if (probs_canal[i][j]!=0):
+                entropia+=prob*math.log2(1/probs_canal[i][j])
+            else:
+                entropia+=0
+         
+    return entropia
+def entropia_ruido(probs_priori,probs_canal):
+    entropia =0
+    entropia_post=entopia_posteriori(probs_priori,probs_canal)
+    prob_salida=Prob_de_b(probs_priori,probs_canal)
+   
+    for i in range(len(probs_canal[0])):
+        entropia+=prob_salida[i]*entropia_post[i] 
+
+    return entropia
+
+
+def entropia_afin(prob_a_priori,mat_canal):
+    prob_simultanea=Prob_simultaneo(prob_a_priori,mat_canal)
+    entropia=0
+    for i in range(len(mat_canal)):
+        for j in range(len(mat_canal[0])):
+            prob=prob_simultanea[i][j]
+            if (prob!=0):
+                entropia+=prob*math.log2(1/prob )
+            else:
+                entropia+=0
+
+           
+    
+    return entropia
+
+def info_mutua_a_b(probs_priori,probs_canal):
+    entropia_entrada=entropia_base_2(probs_priori,saca_INFO_base_2(probs_priori))
+    entropia_ruidosa=entropia_ruido(probs_priori,probs_canal)
+    
+    
+    
+    return entropia_entrada-entropia_ruidosa
+
+def info_mutua_b_a(probs_priori,probs_canal):
+    probs_b=Prob_de_b(probs_priori,probs_canal)
+    entropia_salida=entropia_base_2(probs_b,saca_INFO_base_2(probs_b))
+    entropia_perdidosa=entropia_perdida(probs_priori,probs_canal)
+    
+    
+    
+    return entropia_salida-entropia_perdidosa
+
+
+
+def entropia_priori(probs_priori):
+    return entropia_base_2(probs_priori,saca_INFO_base_2(probs_priori))
+
+def entropia_salida(probs_priori,probs_canal):
+    probs_sal=Prob_de_b(probs_priori,probs_canal)
+    return entropia_base_2(probs_sal,saca_INFO_base_2(probs_sal))   
