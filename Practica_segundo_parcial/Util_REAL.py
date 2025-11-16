@@ -365,7 +365,19 @@ def sum_ine_kraft(lista_pal_cod):
     return sum(suma)
 
 # ---------------------------------------SEGUNDO PARCIAL----------------------------------------------------
+
+
+
+
+# en el primer teoriema de Shannon surgue de la primicia de que la entropia hace de cot
+""" 
+
+en el primer teoriema de Shannon surgue de la primicia de que la entropia hace de cota inferior para la 
+longitu media ya que si la longitud media fuera menor a esta, estariamos frente a un caso en el cual se perdio informacion 
+se demuestra la formula del teorema de shannon 
+"""
 #ver si debo extender el codigo de codificacion antes de hacerlo 
+#se mandan las probabilidades originales
 def primerteoremaShanon(probabilidad,codigoextendido,N):
     alfabeto_vacio=[""]*len(probabilidad)
     _,probexte=extendida_bien(alfabeto_vacio,probabilidad,N)
@@ -373,9 +385,13 @@ def primerteoremaShanon(probabilidad,codigoextendido,N):
     entropia=entropia_base_r(codigoextendido,probabilidad)
     print("Longitud",longitud)
     print("Entropia",entropia)
+    print(entropia,"<=",longitud/N,"<=",(entropia+1/N))
     return entropia<=longitud/N<=(entropia+1/N)
 
-
+"""se efectua el calculo de la redundancia y rendimiento en base a la formula
+queda en evidencia que si reducimos l/n mucho aumenta la complejidad 
+mayor redundancia menor infromacion 
+"""
 def calculo_redundancia_rendimiento(probabilidades,codificacion):
     entropia=entropia_base_r(codificacion,probabilidades)
     logitud=longitud_media(codificacion,probabilidades)
@@ -385,6 +401,8 @@ def calculo_redundancia_rendimiento(probabilidades,codificacion):
 def huffman_binario(probs):
     items = [[p, [i]] for i, p in enumerate(probs)]
     codigos = [''] * len(probs)
+    if len(items)==1:
+        return ["0"]
     while len(items)>1:
         items = sorted(items, key=lambda x: x[0],reverse=True)
         menor_1=items.pop()
@@ -1033,3 +1051,58 @@ def genera_matriz_canal_reducido(mat):
         
     return mat2
 
+def is_uniforme(matriz_canal):
+   
+    num_filas = len(matriz_canal)
+    if num_filas <= 1:
+        return True
+    fila_referencia_ordenada = sorted(matriz_canal[0])
+    for i in range(1, num_filas):
+        fila_actual = matriz_canal[i]
+        fila_actual_ordenada = sorted(fila_actual)
+        if fila_actual_ordenada != fila_referencia_ordenada:
+            return False
+    return True
+
+def calcula_capacidad(mat_canal):
+    capacidad=0
+    if (is_determinante(mat_canal)):
+        capacidad=math.log2(len(mat_canal[0]))
+    elif (is_ruidosa(mat_canal)):
+        capacidad=math.log2(len(mat_canal))
+    elif (is_uniforme(mat_canal)):
+        i=0
+    
+        for j in range(len(mat_canal[0])):
+            
+            if (mat_canal[i][j]!=0):
+                capacidad-=mat_canal[i][j]*math.log2(1/mat_canal[i][j])
+            else:
+                capacidad=0
+        capacidad+=math.log2(len(mat_canal[0]))
+    return capacidad
+
+
+def capacidad_binaria(mat_canal,paso):
+    mutua=[]
+    WES=[]
+    i=0
+    while(i<=1):
+        
+        prob_priori=[i,1-i]
+        mutua.append(info_mutua_a_b(prob_priori,mat_canal))
+        WES.append(i)
+        i+=paso
+    return max(mutua),WES[mutua.index(max(mutua))]
+
+
+def calcula_error(probs_priori,mat_canal):
+    prob_error=0
+    matriz_copia = [fila[:] for fila in mat_canal]
+    
+    for i in range (len(mat_canal[0])):
+        columna = [fila [i] for fila in mat_canal]
+        matriz_copia[columna.index(max(columna))][i]=0
+    for i in range(len(matriz_copia)):
+            prob_error+=probs_priori[i]*sum(matriz_copia[i])
+    return prob_error
