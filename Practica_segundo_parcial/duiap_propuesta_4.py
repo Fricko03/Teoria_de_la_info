@@ -43,8 +43,16 @@ from Util_REAL import *
 # # probs=[0.3,0.1,0.4,0.2]
 # # cod=["10","1110","0","110"]
 # # print(calculo_redundancia_rendimiento(probs,cod))
+##punto 7 
 
-# #puhto 10
+
+# # c = ["0","10","110","1110"]
+# c = ["110","0","1110","10"]
+# # c = ["10","1110","0","110"]
+# probs=[0.3,0.1,0.4,0.2]
+# c,probs=extendida_bien(c,probs,2)
+# print(calculo_redundancia_rendimiento(probs,c))
+# # #puhto 10##punto 7 
 
 # # mensaje="ABSDABSBDSBAAABBBSBSBABADBSBABSBDBSSSAAABB"
 # # alfa,prob=Alfabeto_y_sus_probabilidades(mensaje)
@@ -57,17 +65,19 @@ from Util_REAL import *
 # # print(shanon_binario(prob))
 
 # ###punto 12 
-# # mensaje="05987463258784784512536669895745123656253698989656452121702300223659"
-# # alfa,prob=Alfabeto_y_sus_probabilidades(mensaje)
-# # huf=(huffman_binario(prob))
-# # shano=(shanon_binario(prob))
-# # print(calculo_redundancia_rendimiento(prob,huf))
-# # print(longitud_media(huf,prob))
-# # print(calculo_redundancia_rendimiento(prob,shano))
-# # print(longitud_media(shano,prob))
-# ##punto 13
-# # prob=[0.2,0.2,0.3,0.3]
-# # print(huffman_binario(prob))
+mensaje="05987463258784784512536669895745123656253698989656452121702300223659"
+alfa,prob=Alfabeto_y_sus_probabilidades(mensaje)
+huf=(huffman_binario(prob))
+shano=(shanon_binario(prob))
+print(calculo_redundancia_rendimiento(prob,huf))
+print(longitud_media(huf,prob))
+print(calculo_redundancia_rendimiento(prob,shano))
+print(longitud_media(shano,prob))
+print(huf)
+print(shano)
+# #punto 13
+# prob=[0.2,0.2,0.3,0.3]
+# print(huffman_binario(prob))
 # #punto14
 
 # # probs=[0.4,0.25,0.25,0.1]
@@ -143,4 +153,12 @@ from Util_REAL import *
 # print(Hamming_errores_soluciones(c3))
 ##punto 31
 
-c1=["0100001","0100010"]
+# ## chat gpt errrres
+# matrix_test_1  = [
+#     [0, 0, 1, 0, 0, 0, 0, 1],  # Fila 0: Paridad Longitudinal (Falla C4)
+#     [1, 0, 0, 0, 1, 0, 0, 0],  # Fila 1: 'D' (68) + PV (0)
+#     [1, 0, 0, 0, 0, 0, 1, 0],  # Fila 2: 'A' (65) + PV (1)
+#     [1, 0, 1, 0, 1, 1, 0, 0],  # Fila 3: 'T' (84) con error + PV (0) (Falla F3)
+#     [1, 0, 0, 0, 0, 0, 1, 0]   # Fila 4: 'A' (65) + PV (1)
+# ]
+# print(decodificar_y_corregir_paridad(matrix_to_bytearray(matrix_test_1)))

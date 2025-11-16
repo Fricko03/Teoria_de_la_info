@@ -942,7 +942,7 @@ def entropia_salida(probs_priori,probs_canal):
 #-----------------UNIDAD 6 --------------------------------
 
 
-def is_not_ruidosa(probs_canal):
+def is_ruidosa(probs_canal):
     
     for j in range (len(probs_canal[0])):
         cont=0
@@ -1012,7 +1012,7 @@ def is_lineal(mat_canal,j1,j2):
     return True
 
 def genera_mat_det(mat,c1,c2):
-    mat_compuesta = [[1 if i==j else 0 for j in range(len (mat[0]))] for i in range(len(mat[0]))]
+    mat_compuesta=I = [[1 if i==j else 0 for j in range(len (mat[0]))] for i in range(len(mat[0]))]
     for fila in mat_compuesta:
         fila[c1] += fila[c2]
     
@@ -1103,7 +1103,7 @@ def calcula_capacidad(mat_canal):
     capacidad=0
     if (is_determinante(mat_canal)):
         capacidad=math.log2(len(mat_canal[0]))
-    elif (is_not_ruidosa(mat_canal)):
+    elif (is_ruidosa(mat_canal)):
         capacidad=math.log2(len(mat_canal))
     elif (is_uniforme(mat_canal)):
         i=0
