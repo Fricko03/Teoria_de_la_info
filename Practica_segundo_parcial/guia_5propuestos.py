@@ -109,7 +109,7 @@ y_2= "110021102110022010220121122100112011"
 #punto 11_a
 # pron=[2/5,3/5]
 # # mat=[[3/5,2/5],[2/6,4/6]]
-# pron=[3/5,1/4]
+# pron=[3/4,1/4]
 # mat=[[2/3,1/3],[1/10,9/10]]
 # print(entropia_priori(pron))
 # print(entopia_posteriori(pron,mat))
@@ -184,54 +184,61 @@ y_2= "110021102110022010220121122100112011"
 # print(entropia_afin(prob_c2,mat_c2))
 # print(entropia_afin(pron,mat))
 
-# punto 21
+# # punto 21
 
-# Alfabetos
-alfabeto_A_canal1 = ['a1', 'a2']
-alfabeto_B_canal1 = ['b1', 'b2']
+# # Alfabetos
+# alfabeto_A_canal1 = ['a1', 'a2']
+# alfabeto_B_canal1 = ['b1', 'b2']
 
-# Probabilidades a priori P(A)
-prob_A_canal1 = [0.5, 0.5]
+# # Probabilidades a priori P(A)
+# prob_A_canal1 = [0.5, 0.5]
 
-# Matriz de probabilidades condicionales P(B|A)
-matriz_canal1 = [
-    [1, 0],  # Fila A1
-    [0, 1]   # Fila A2
-]
-# Alfabetos
-alfabeto_A_canal2 = ['a1', 'a2']
-alfabeto_B_canal2 = ['b1', 'b2']
+# # Matriz de probabilidades condicionales P(B|A)
+# matriz_canal1 = [
+#     [1, 0],  # Fila A1
+#     [0, 1]   # Fila A2
+# ]
+# # Alfabetos
+# alfabeto_A_canal2 = ['a1', 'a2']
+# alfabeto_B_canal2 = ['b1', 'b2']
 
-# Probabilidades a priori P(A)
-prob_A_canal2 = [0.5, 0.5]
+# # Probabilidades a priori P(A)
+# prob_A_canal2 = [0.5, 0.5]
 
-# Matriz de probabilidades condicionales P(B|A)
-matriz_canal2 = [
-    [0.9, 0.1],  # Fila A1
-    [0.3, 0.7]   # Fila A2
-]
-# Alfabetos
-alfabeto_A_canal3 = ['a1', 'a2', 'a3']
-alfabeto_B_canal3 = ['b1', 'b2', 'b3', 'b4']
+# # Matriz de probabilidades condicionales P(B|A)
+# matriz_canal2 = [
+#     [0.9, 0.1],  # Fila A1
+#     [0.3, 0.7]   # Fila A2
+# ]
+# # Alfabetos
+# alfabeto_A_canal3 = ['a1', 'a2', 'a3']
+# alfabeto_B_canal3 = ['b1', 'b2', 'b3', 'b4']
 
-# Probabilidades a priori P(A)
-prob_A_canal3 = [0.25, 0.25, 0.50]
+# # Probabilidades a priori P(A)
+# prob_A_canal3 = [0.25, 0.25, 0.50]
 
-# Matriz de probabilidades condicionales P(B|A)
-matriz_canal3 = [
-    [0.25, 0.25, 0.25, 0.25],  # Fila A1
-    [0.25, 0.25, 0,    0.5],   # Fila A2
-    [0.50, 0,    0.5,  0]    # Fila A3
-]
-print(propiedad_simetrica(prob_A_canal1,matriz_canal1))
-print(info_mutua_a_b(prob_A_canal1,matriz_canal1))
-print(info_mutua_b_a(prob_A_canal1,matriz_canal1))
-print()
-print(propiedad_simetrica(prob_A_canal2,matriz_canal2))
-print(info_mutua_a_b(prob_A_canal2,matriz_canal2))
-print(info_mutua_b_a(prob_A_canal2,matriz_canal2))
-print()
-print(propiedad_simetrica(prob_A_canal3,matriz_canal3))
-print(info_mutua_a_b(prob_A_canal3,matriz_canal3))
-print(info_mutua_b_a(prob_A_canal3,matriz_canal3))
-print()
+# # Matriz de probabilidades condicionales P(B|A)
+# matriz_canal3 = [
+#     [0.25, 0.25, 0.25, 0.25],  # Fila A1
+#     [0.25, 0.25, 0,    0.5],   # Fila A2
+#     [0.50, 0,    0.5,  0]    # Fila A3
+# ]
+# print(propiedad_simetrica(prob_A_canal1,matriz_canal1))
+# print(info_mutua_a_b(prob_A_canal1,matriz_canal1))
+# print(info_mutua_b_a(prob_A_canal1,matriz_canal1))
+# print()
+# print(propiedad_simetrica(prob_A_canal2,matriz_canal2))
+# print(info_mutua_a_b(prob_A_canal2,matriz_canal2))
+# print(info_mutua_b_a(prob_A_canal2,matriz_canal2))
+# print()
+# print(propiedad_simetrica(prob_A_canal3,matriz_canal3))
+# print(info_mutua_a_b(prob_A_canal3,matriz_canal3))
+# print(info_mutua_b_a(prob_A_canal3,matriz_canal3))
+# print()
+
+
+#punt0 17 
+pron=[0.25,0.25,0.50]
+mat=[[0.25,0.25,0.25,0.25],[0.25,0.25,0.,0.5],[0.5,0.,0.5,0.]]
+print(entropia_ruido(pron,mat))
+print(info_mutua_formula(pron,mat))

@@ -5,31 +5,12 @@ import random
 import copy
 import math
 
-from numpy import info
 
 
 
 #FUENTE SIN MEMORIA
 
-def valor_W(w):
-   prob=[w,1-w]
-   info=saca_INFO_base_2(prob)
-   return  entropia_base_2(prob,info)
-#SACAR ALFABETO PROB
-def Alfabeto_y_sus_probabilidades(mensaje):
-    alfabeto=[]
-    probabilidades=[]
-    for c in mensaje:
-        if (c not in alfabeto):
-            alfabeto.append(c)
-            probabilidades.append(1)
-        else:
-            probabilidades[alfabeto.index(c)] += 1
-    
-    probabilidades=[i/len(mensaje) for i in probabilidades]
-    ordena = sorted(zip(alfabeto, probabilidades))
-    alfabeto, probabilidades = map(list, zip(*ordena))
-    return alfabeto,probabilidades
+
 
 #GENERAR MENSAJE EN BASE A UN ALFABEHO Y SUS PROBABILIDADES
 
@@ -86,22 +67,7 @@ def calc_exte(alfabeto,probabilidades,n):
         
     return alfabeto_extendido,probablilidades_extendido
 
-def extendida_bien(alfabeto, probabilidades,n):
-    if(n==1):
-        return alfabeto,probabilidades
-    else:
-      alfabeto_extendido,probablilidades_extendido=extendida_bien(alfabeto,probabilidades,n-1)
-      alfabeto_extendido=alfabeto_extendido*len(alfabeto)
-      probablilidades_extendido=probablilidades_extendido*len(probabilidades)  
-      fin=0
-      for i,letra in enumerate(alfabeto):
-          for j in range(fin,fin+len(alfabeto)**(n-1)):
-                alfabeto_extendido[j]=letra+alfabeto_extendido[j]
-                probablilidades_extendido[j]=probabilidades[i]*probablilidades_extendido[j]
-          fin+=len(alfabeto)**(n-1)
-         
-              
-    return alfabeto_extendido,probablilidades_extendido
+
 
 ####################################################
 ## FUENTE CON MEMORIA
@@ -294,34 +260,8 @@ def propiedades(C1):
         print("Es bloque")
 
 
-def obtener_alfabeto_codigo(lista_pal_cod):
-    alfa_cod=[]
-    for i in lista_pal_cod:
-        for j in i:
-            if j not in alfa_cod:
-                alfa_cod.append(j)
-    return alfa_cod
-
-def obtener_longitudes_cod(lista_pal_cod):
-    return [len(i)for i in lista_pal_cod]
 
 
-
-def  entropia_base_r(lista_pal_cod,lista_probs):
-    r=len(obtener_alfabeto_codigo(lista_pal_cod))
-    info_fuente=obtener_info_base_r(lista_probs,r)
-    return sum(s*p for s,p in zip(lista_probs,info_fuente))
-
-
-def obtener_info_base_r(lista_probs,r):
-    
-    return [0 if i == 0 else math.log(1/i, r) for i in lista_probs]    
-
-
-
-def longitud_media(lista_pal_cod,lista_probs):
-    longitudes=obtener_longitudes_cod(lista_pal_cod)
-    return sum(p*l for p,l in zip(longitudes,lista_probs))
 
 def is_compacto(lista_pal_cod,lista_probs):
     if (es_instantaneo(lista_pal_cod)):
@@ -365,48 +305,173 @@ def sum_ine_kraft(lista_pal_cod):
     return sum(suma)
 
 # ---------------------------------------SEGUNDO PARCIAL----------------------------------------------------
+    
+def obtener_alfabeto_codigo(lista_pal_cod):
+    
+    alfa_cod=[]
+    
+    for i in lista_pal_cod:
+        for j in i:
+            if j not in alfa_cod:
+                alfa_cod.append(j)
+                
+    return alfa_cod
+
+def extendida_bien(alfabeto, probabilidades,n):
+    
+    if(n==1):
+        
+        return alfabeto,probabilidades
+    
+    else:
+        
+      alfabeto_extendido,probablilidades_extendido=extendida_bien(alfabeto,probabilidades,n-1)
+      alfabeto_extendido=alfabeto_extendido*len(alfabeto)
+      probablilidades_extendido=probablilidades_extendido*len(probabilidades)  
+      fin=0
+      
+      for i,letra in enumerate(alfabeto):
+          for j in range(fin,fin+len(alfabeto)**(n-1)):
+                alfabeto_extendido[j]=letra+alfabeto_extendido[j]
+                probablilidades_extendido[j]=probabilidades[i]*probablilidades_extendido[j]
+                
+          fin+=len(alfabeto)**(n-1)
+         
+              
+    return alfabeto_extendido,probablilidades_extendido
+
+def valor_W(w):
+    
+   prob=[w,1-w]
+   info=saca_INFO_base_2(prob)
+   
+   return  entropia_base_2(prob,info)
+#SACAR ALFABETO PROB
+def Alfabeto_y_sus_probabilidades(mensaje):
+    
+    alfabeto=[]
+    probabilidades=[]
+    
+    for c in mensaje:
+        if (c not in alfabeto):
+            alfabeto.append(c)
+            probabilidades.append(1)
+        else:
+            probabilidades[alfabeto.index(c)] += 1
+    
+    probabilidades=[i/len(mensaje) for i in probabilidades]
+    ordena = sorted(zip(alfabeto, probabilidades))
+    alfabeto, probabilidades = map(list, zip(*ordena))
+    
+    return alfabeto,probabilidades
+
+
+def saca_INFO_base_2(probs):
+    
+    resultado=[]
+    
+    for s in probs:
+        if(s==0):
+            resultado.append(0)
+        else:
+            resultado.append(math.log2(1/s))
+            
+    return  resultado
+
+def entropia_base_2(lista_pro,lista_INFO):
+   return  sum(s*p for s,p in zip(lista_pro,lista_INFO))
 
 
 
+def obtener_longitudes_cod(lista_pal_cod):
+    return [len(i)for i in lista_pal_cod]
 
-# en el primer teoriema de Shannon surgue de la primicia de que la entropia hace de cot
+
+
+def  entropia_base_r(lista_pal_cod,lista_probs):
+    
+    r=len(obtener_alfabeto_codigo(lista_pal_cod))
+    info_fuente=obtener_info_base_r(lista_probs,r)
+    
+    return sum(s*p for s,p in zip(lista_probs,info_fuente))
+
+
+def obtener_info_base_r(lista_probs,r):
+    
+    return [0 if i == 0 else math.log(1/i, r) for i in lista_probs]    
+
+
+
+def longitud_media(lista_pal_cod,lista_probs):
+    
+    longitudes=obtener_longitudes_cod(lista_pal_cod)
+    
+    return sum(p*l for p,l in zip(longitudes,lista_probs))
+
+#---------------------Utiless---------------------------------
+
+
 """ 
 
 en el primer teoriema de Shannon surgue de la primicia de que la entropia hace de cota inferior para la 
 longitu media ya que si la longitud media fuera menor a esta, estariamos frente a un caso en el cual se perdio informacion 
 se demuestra la formula del teorema de shannon 
+primero se calcula la extension del codigo, despues la logitud media de la extension y la entropia en base r(que siempre es dos en la materi
+pero aca esta hecho generico )
+luego se verifica la expresion Hr(S)<=Ln/n<Hr(s)+1/n
 """
 #ver si debo extender el codigo de codificacion antes de hacerlo 
 #se mandan las probabilidades originales
 def primerteoremaShanon(probabilidad,codigoextendido,N):
+    
     alfabeto_vacio=[""]*len(probabilidad)
     _,probexte=extendida_bien(alfabeto_vacio,probabilidad,N)
     longitud=longitud_media(codigoextendido,probexte)
     entropia=entropia_base_r(codigoextendido,probabilidad)
+    
     print("Longitud",longitud)
     print("Entropia",entropia)
     print(entropia,"<=",longitud/N,"<=",(entropia+1/N))
+    
     return entropia<=longitud/N<=(entropia+1/N)
 
 """se efectua el calculo de la redundancia y rendimiento en base a la formula
+Rendimiento eficiencia: n=Hr(S)/Ln Redundancia:1-n=(L-Hr(S))/L
+el rendimiento es maximo si L=H   
 queda en evidencia que si reducimos l/n mucho aumenta la complejidad 
 mayor redundancia menor infromacion 
 """
 def calculo_redundancia_rendimiento(probabilidades,codificacion):
+    
     entropia=entropia_base_r(codificacion,probabilidades)
     logitud=longitud_media(codificacion,probabilidades)
+    
     return entropia/logitud,(1-entropia/logitud)
 
 
+    """primero creo una lista itemsque  almacena la probabilidad y una lista de los indices del simbolo al que pertenece 
+luego se ordena la lista de mayor a menor,mediante una funcion lambda,  de manera que los de menor probabilidad queden al final-
+se sacan los dos ultimos elementos de a uno con pop, y se los almacena en dos listas con el mismo formato que items,  
+Luego a todos los simbolos del elemento con menor  probabilidad se les agrega un 0 a la izquierda
+y a todos los del segundo menor se les agrga un 1 en la lista codigos mediante los indices almacenadis 
+Para finalizar se combinan los dos simbolos sumando sus probabilidades  y concatenando indices 
+se vuelven a agregar a la lista y esto  se repite hasta que quede un elemento en la lista 
+    """
 def huffman_binario(probs):
+    
     items = [[p, [i]] for i, p in enumerate(probs)]
     codigos = [''] * len(probs)
+    
     if len(items)==1:
+        
         return ["0"]
+    
     while len(items)>1:
+        
         items = sorted(items, key=lambda x: x[0],reverse=True)
         menor_1=items.pop()
         menor_2=items.pop()
+        
         for i in menor_1[1]:
             codigos[i] = '0' + codigos[i]
         
@@ -417,24 +482,43 @@ def huffman_binario(probs):
 
     return codigos
 
+"""
+primero se crea una lista de elementos donde cada uno contiene la probabilidad y el indice del simbolo
+luego se ordena de mayor a menor con una funcion lambda 
+y se llama a la funcion _shanon_rec_bin, la cual va dividiendo la lista en dos conjuntos de probabilidades recursivamente 
+dividiendo esta lo mas cerca a la mitad(disponible) o haciendo que la diferencia de las probabilidades entre los dos subconjuntos minima, para lograr eso 
+en cada llamada recursiva se calcula, primero la suma total de las probabilidades del conjunto a dividir, que en la primera iteracion seria 0.5 pero luego puede variar dependiendo de donde se dividio el punto anterior,
+la suma  de las probabilidades hasta que se pasa de la mitad de la suuma total de las probabilidades
+luego se busca el punto donde la suma acumulada supera la mitad del total. Segun este resultado se decide para donde va el elemento compartido
+A todos los simbolos del conjunto1 se les agrega un uno a la derecha 
+y los del conjunto0 un 0.
+Finalmente se llama recursivamente con ambos conjuntos, hasta que quede un único elemento.
+El resultado final es un código Shannon-Fano para cada símbolo  
+"""
 def _shanon_rec_bin(items, cods):
+    
     n=len(items)
      
     if(n>1):
+        
         prob_tot=sum(i[0] for i in items)
         acum=0
         resto=0
         i=0
+        
         while (i<=n-1 and acum<prob_tot/2):
             acum+=items[i][0]
             i+=1
+            
         for j in range(i-1,n):
             resto+=items[j][0]
 
         if acum>resto:
             i=i-1
+            
         cod_1= items[0:i]
         cod_0=items[i:]
+        
         for j in cod_0:
             cods[j[1]]=cods[j[1]]+'0'
            
@@ -444,25 +528,31 @@ def _shanon_rec_bin(items, cods):
         _shanon_rec_bin(cod_0,cods)
         _shanon_rec_bin(cod_1,cods)
     
-    
-
-    
 def shanon_binario(probs):
+    
     items = [[p, i] for i, p in enumerate(probs)]
     codigos = [''] * len(probs)
     items = sorted(items, key=lambda x: x[0],reverse=True)
     _shanon_rec_bin(items,codigos)
+    
     return codigos
 
 
-
+"""
+Dada una cadena de caracteres con un mensaje escrito en el alfabeto fuente,
+devolver una secuencia de bytes (bytearray) que contenga el mensaje codificado
+mediante un diccionario toma caracter a carater del mensaje y devuelve la codificacion correspondiente concatenandolas 
+hasta codificar todo el mensaje
+luego evaluo cuanto de resto debo agregar para que entre los bits del mensaje, los bits que me indica el resto y el resto sea multiplo de 8
+una vez terminado este paso se toman de a 8 y se conbierte a int para almacenad en el bytearray cadena que almacena el mensaje codificado 
+   """
     
     
 def codificacion_binaria(alfabeto_fuente, codificacion, mensaje):
+    
     cadena = bytearray()
     cadena_str = "" 
     dicionario_codificacion = dict(zip(alfabeto_fuente, codificacion))
-    
     
     for i in mensaje:
         cadena_str += dicionario_codificacion[i]
@@ -473,17 +563,12 @@ def codificacion_binaria(alfabeto_fuente, codificacion, mensaje):
     # En esencia, queremos que len(cadena_str) + 8 + resto sea un múltiplo de 8.
     resto = (8 - (len(cadena_str) + 8) % 8) % 8
     
-
     if resto != 0:
         cadena_str += "0" * resto
         
-  
     resto_binario = bin(resto)[2:].zfill(8)
-    
-    
     cadena_str = resto_binario + cadena_str
     
-
     for i in range(0, len(cadena_str), 8):
         # Tomar bloques de 8 bits y convertirlos a un entero, luego agregarlo al bytearray
         cadena.append(int(cadena_str[i:i+8], 2))
@@ -491,28 +576,34 @@ def codificacion_binaria(alfabeto_fuente, codificacion, mensaje):
     return cadena 
 
 
+"""
+  Reconstruye el mensaje original a partir de los bytes codificados.
+Primero convierto cada byte en su representacion de 8 bits en string 
+Los primeros 8 bits indican cuántos ceros adicionales fueron agregados por el resto 
+en la codificacion, por lo que se extrae ese valor y se eliminan esos ceros del final de la cadena
+Para decodificar se analiza el prefijo de la cadena de bits para ver que codigo binario coincide.
+Al ser instantaneos siempre existe una unica coincidencia.
+Cada vez que encuentro el codigo valido, se agrega el simbolo al mensaje codificado y se recorta la cantidad de bits utilizada
+Esto se repite hasta llegar al final de la cadena, reconstruyendo el mensaje original.    
+"""
+
 
 def decodificacion_binaria(alfabeto_fuente, codificacion, mensaje_codificado):
+    
     cadena = ""
     mensaje_decodificado = ""
-    
     
     for i in mensaje_codificado:
         
         byte = bin(i)[2:].zfill(8)
         cadena += str(byte)
         
-   
     resto = int(cadena[:8], 2)
-    
-    
     cadena = cadena[8:]
-    
     
     if resto > 0:
         cadena = cadena[:-resto]
         
- 
     dicionario_decodificacion = dict(zip(codificacion, alfabeto_fuente))
     
     while(len(cadena)>0):
@@ -525,32 +616,36 @@ def decodificacion_binaria(alfabeto_fuente, codificacion, mensaje_codificado):
             else:
                 print(f"ERROR DE DECODIFICACIÓN: Secuencia corrupta cerca de: '{cadena[:20]}...'")
                 break # Rompe el 'while' principal
-    
-        
-        
 
     return mensaje_decodificado
 
-
+    """imprime un bytearray en formato binario 
+    """
 def imprimir_bytearray_en_binario(datos_bytes):
     
     cadena_binaria = ""
+    
     for byte_val in datos_bytes:
        
         octeto = bin(byte_val)[2:].zfill(8)
         cadena_binaria += octeto
+        
     return cadena_binaria
 
-## me da el n de N:1
+"""calcula cuantas veces esta conprimido el mensaje en base al original mensaje original / mensaje codificado  y me devuelve el n de N:1"""
+
 def calculo_de_compresion(mensaje,mensaje_codificado):
+    
     if len(mensaje_codificado)==0:
         return 0
     else:
         return len(mensaje.encode('utf-8'))/len(mensaje_codificado)
 
 def codificacion_en_archivo(nombre_archivo,alfabeto,probabilidades,mensaje):
+    
     codificacion=huffman_binario(probabilidades)
     mensaje_codificado=codificacion_binaria(alfabeto,codificacion,mensaje)
+    
     try:
         # Usamos 'wb' (write binary) para escritura binaria
         with open(nombre_archivo, 'wb') as archivo:
@@ -559,68 +654,70 @@ def codificacion_en_archivo(nombre_archivo,alfabeto,probabilidades,mensaje):
         
         print(f"Bytearray almacenado con éxito en '{nombre_archivo}'.")
         return codificacion
+    
     except IOError as e:
         print(f"Error al escribir el archivo: {e}")
 
 def decodificar_desde_archivo(nombre_archivo,alfabeto,codificacion):
     
     try:
-       
         with open(nombre_archivo, 'rb') as archivo:
-           
             mensaje_codificado = archivo.read()
-            
             # Convertir el objeto 'bytes' a 'bytearray'
             mensaje_codificado = bytearray(mensaje_codificado)
         
         print(f"Datos leídos con éxito de '{nombre_archivo}'.")
+        
         return decodificacion_binaria(alfabeto,codificacion,mensaje_codificado)
     
     except IOError as e:
         print(f"Error al leer el archivo: {e}")
+        
         return None
     
+"""Primero recorro el mensaje, detectando las secuencias donde el mismo caracter aparece repetido
+varias veces seguidas.
+Para esto, cuento cuantas veces aparece el mismo caracter (hasta un maximo de 255
+porque es el maximo valor que puede representar un byte).
+Luego tomo el codigo ascii del caracter y agrego al resultado (que es un bytearray)
+un byte con el codigo ascii y uno con el numero de repeticiones
+Despues se avanza en el mensaje desde el primer caracter diferente.
+Este proceso se repite hasta recorrer el mensaje por completo """
 def RLC(mensaje):
+    
     secuencia=bytearray()
+    
     if len(mensaje)>0:
        i = 0
        N = len(mensaje)
        MAX = 255 
+       
        while i < N:
            caracter_actual = mensaje[i]
            count = 1
            j = i + 1
-
-       
            while j < N and mensaje[j] == caracter_actual and count < MAX:
                count += 1
                j += 1
            
-         
            try:
                ascii_val = ord(caracter_actual) 
            except TypeError:
                
                raise ValueError("El mensaje contiene caracteres no válidos para la codificación ASCII.")
            
-           
            secuencia.append(ascii_val) 
-           
-           
            secuencia.append(count)
-           
-           
            i = j 
 
     return secuencia
-
-
+""" escribe el bytearray en formato 2R3L5C
+agarra el priemer valor como la letra y el segundo como la cantidad 
+"""
 
 def RLC_to_string(secuencia_RLC):
     
-           
     resultado = []
-    
     
     for i in range(0, len(secuencia_RLC), 2):
         
@@ -639,17 +736,12 @@ def Hamming_errores_soluciones(codificacion_binaria):
     if num_codigos < 2:
         return 0,0,0
 
-    
     min = float('inf')
-
    
     for i in range(num_codigos):
-        
         for j in range(i + 1, num_codigos):
-            
             codigo_A = codificacion_binaria[i]
             codigo_B = codificacion_binaria[j]
-            
             # Calcular la distancia entre el par
             distancia_actual =0
             for bit_a,bit_b in zip(codigo_A,codigo_B):
@@ -978,6 +1070,7 @@ def mat_compuesta(probs_canal_1,probs_canal_2):
     return mat_compuesta
 
 
+   
 
 def is_lineal(mat_canal,j1,j2):
     #verifica
@@ -1028,41 +1121,6 @@ def imprimir_matriz_normal(M):
         print(fila)
 
 
-def reduce_mat(mat, c1, c2):
-    """
-    Intenta reducir mat usando c1 y c2.
-    Si es reducción simple, devuelve la nueva matriz.
-    Si no, devuelve None.
-    """
-    if is_lineal(mat, c1, c2):
-        return mat_compuesta(mat, genera_mat_det(mat, c1, c2))
-    else:
-        return None
-
-
-
-def reducir_iterativamente(mat,p):
-    matriz_actual = mat
-
-    while True:
-        entrada = input("Ingrese c1 c2 (o -1 -1 para salir): ")
-        c1, c2 = map(int, entrada.split())
-
-        if c1 == -1 and c2 == -1:
-            print("Fin de la reducción.")
-            break
-
-        nueva = reduce_mat(matriz_actual, c1, c2)
-
-        if nueva is None:
-            print("No es reducción simple")
-        else:
-            matriz_actual = nueva
-            print(info_mutua_a_b(p,matriz_actual))
-            imprimir_matriz_normal(matriz_actual)
-
-    return matriz_actual
-
 
 def se_puede_reducir(mat):
     for i in range(len(mat[0])):
@@ -1071,16 +1129,16 @@ def se_puede_reducir(mat):
                 return i,j
     return -1,-1
 
-def genera_matriz_canal_reducido(mat):
+def genera_matriz_canal_reducido(mat,prob):
     i,j=se_puede_reducir(mat)
-    p2=[1/3,1/3,1/3]
+    print("Info mutua original ",info_mutua_a_b(prob,mat))
     mat2=mat
     while i!=-1:
         mat_determinante = genera_mat_det(mat2,i,j)
         mat2=mat_compuesta(mat2,mat_determinante)
         imprimir_matriz_normal(mat2)
         
-        print("Info mutua ",info_mutua_a_b(p2,mat2))
+        print("Info mutua ",info_mutua_a_b(prob,mat2))
         
         i,j=se_puede_reducir(mat2)
         
@@ -1130,7 +1188,7 @@ def capacidad_binaria(mat_canal,paso):
         i+=paso
     return max(mutua),WES[mutua.index(max(mutua))]
 
-
+# devuelve I(max) y W
 def calcula_error(probs_priori,mat_canal):
     prob_error=0
     matriz_copia = [fila[:] for fila in mat_canal]
@@ -1297,3 +1355,41 @@ def propiedad_simetrica(priori,canal):
     # Define una tolerancia (ej: 0.000000001)
     # abs_tol es la diferencia máxima absoluta permitida
     return math.isclose(i_ab, i_ba, abs_tol=1e-9)
+
+
+def reducir_iterativamente_por_consola(mat,p):
+    matriz_actual = mat
+
+    while True:
+        entrada = input("Ingrese c1 c2 (o -1 -1 para salir): ")
+        c1, c2 = map(int, entrada.split())
+
+        if c1 == -1 and c2 == -1:
+            print("Fin de la reducción.")
+            break
+
+        nueva = reduce_mat_consola(matriz_actual, c1, c2)
+
+        if nueva is None:
+            print("No es reducción simple")
+        else:
+            matriz_actual = nueva
+            print(info_mutua_a_b(p,matriz_actual))
+            imprimir_matriz_normal(matriz_actual)
+
+    return matriz_actual
+
+
+def reduce_mat_consola(mat, c1, c2):
+    """
+    Intenta reducir mat usando c1 y c2.
+    Si es reducción simple, devuelve la nueva matriz.
+    Si no, devuelve None.
+    """
+    if is_lineal(mat, c1, c2):
+        return mat_compuesta(mat, genera_mat_det(mat, c1, c2))
+    else:
+        return None
+
+
+
