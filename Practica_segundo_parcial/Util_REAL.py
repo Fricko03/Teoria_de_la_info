@@ -728,8 +728,12 @@ def RLC_to_string(secuencia_RLC):
         
     return "".join(resultado)
 
-
-
+"""Primero comparo cada par de codigos binarios, recorriendo todos los pares posibles
+Luego para cada uno de los codigos se recorre los bits  bits en paralelo y cuento en cuantas 
+posiciones difieren, esto para calcular  la distancia de Hamming entre ambos códigos.
+Luego se chequea con la min y en caso de la nueva ser menor se cambian 
+Al finalizar se calcula la cantidad de errores detectables como la distancia -1
+y la cantidad de errores corregibles como el piso de la ((distancia-1)/2)"""
 def Hamming_errores_soluciones(codificacion_binaria):
    
     num_codigos = len(codificacion_binaria)
@@ -763,7 +767,10 @@ def Hamming_errores_soluciones(codificacion_binaria):
     if errores_corregibles < 0: errores_corregibles = 0
 
     return min,errores_detectables,errores_corregibles
-
+""" Agarra un caracter lo escribe en un binario de 7 bits 
+Cuenta la cantidad de unos que hay y si esta es par 
+    se le pone un 0 al finanl y si es impar se le pone un 1 al final
+"""
 
 def paridad_caracter(carat):#par
     
@@ -774,14 +781,35 @@ def paridad_caracter(carat):#par
     else:
         ascii_val=ascii_val<<1|1
     return ascii_val
-
+"""
+    Verifica si el bit de pariedad ya que 
+    al agregar el bit de pariedad si era impar se agrega un 1 y lo hace par y se era para aguega un 0 por ende sigue siendo par 
+    entonces lo que se verifica es que la cantidad de unos sea par en caso contrario la pariedad esta mal 
+"""
 def verificacion(byte):
     total_de_unos = byte.bit_count()
     if total_de_unos % 2 == 0:
          return True  # La regla (TOTAL PAR) se cumplió. Todo bien.
     else:
         return False # La regla (TOTAL PAR) se ROMPIÓ. Hubo error.
-# jgjhgjhgjhg
+
+    """
+
+
+
+Se recorre el mensaje de entrada, caracter por caracter.
+
+Para cada caracter, se llama a la función paridad_caracter para obtener su byte de 8 bits
+. Este byte se convierte en una fila de 8 bits (una lista de 1s y 0s) y se añade al final de la matriz.
+Después, una vez que todos los caracteres del mensaje están en la matriz, se recorren las columnas (de la 0 a la 7) para calcular la paridad vertical.
+Para cada columna, se cuentan cuántos bits "1" hay.
+Si la cantidad total de "1" en esa columna es impar, se pone un "1" en la primera fila (la matriz[0]) de esa columna. Si es par, se queda en "0".
+Al finalizar, la matriz está completa (con paridad horizontal en las filas , paridad vertical en las columnas y cruzada ).
+Cada fila de bits se convierte en un string binario, luego en un número (byte), y se añade al bytearray mensaje_codificado_paridad.
+El resultado que se devuelve es este bytearray es la  matriz de pariedad.
+    
+    """
+
 def codificar_mensaje_con_paridad(mensaje):
     
     mensaje_codificado_paridad = bytearray()
@@ -811,7 +839,22 @@ def codificar_mensaje_con_paridad(mensaje):
     return mensaje_codificado_paridad
 
 # NOTA: Asume que bits_a_caracter(bits_lista) está definida para convertir 7 bits a un carácter.
+"""
+Explicación del Código
 
+Se recorre el mensaje_codificado_bytes de entrada, byte por byte. 
+Cada byte se convierte en su representación de 8 bits (una lista de 1s y 0s) y esa lista se añade como una nueva fila a la matriz_recibida. 
+Al finalizar este bucle, la matriz que se envió (incluyendo la fila de paridad vertical en la Fila 0) está completamente reconstruida.
+Primero se hace la verivicacion del bit de pariedad cruzada ya que por convencion si este falla se descarta el mensaje, esto se hace porque no sabemos si fallo en alguno de los bit de pariedad o se dio alguna convimacion rara de errores
+A continuacion por filas y por columnas de las pariedades y en caso de discrepancia se se guarda la columna o fila correspondiente en un vec_aux
+Una vez terminado este proceso hay tres casos posibles:
+Caso 1: Un solo error. Si hay exactamente una fila con error y exactamente una columna con error, el código ha localizado un único bit erróneo en la intersección de ambas. 
+Procede a corregir el bit "volteándolo" (usando ^= 1) y avisa que el error fue corregido.
+Caso 2: Sin error. Si ambas listas están vacías, el mensaje se recibe correctamente y no se hace nada.
+Caso 3: Error múltiple. el error  no se puede localizar. 
+El código avisa que descarta el mensaje y devuelve un string vacío.
+Finalmente, si el mensaje fue aceptado (ya sea porque estaba bien o porque fue corregido), se recorre la matriz desde la fila uno reconstruyendo el mensaje agarrando los primeros 7 bits de cada fila 
+"""
 def decodificar_y_corregir_paridad(mensaje_codificado_bytes):
    
     
@@ -876,7 +919,8 @@ def decodificar_y_corregir_paridad(mensaje_codificado_bytes):
                 
         
     return mensaje_original
-
+    """se pasa de una matriz con filas de este estilo "0001000" a un bytearray
+    """
 def mat_a_byte(matriz):
     mensaje=bytearray()
     for fila in matriz:
@@ -885,7 +929,8 @@ def mat_a_byte(matriz):
         
         mensaje.append(byte_val)
     return mensaje
-
+"""se pasa de una matriz con filas de este estilo [1,0,0,0,1,0,0] a un bytearray
+"""
 def matrix_to_bytearray(matriz_bits):
 
     byte_array_resultado = bytearray()
@@ -895,17 +940,17 @@ def matrix_to_bytearray(matriz_bits):
         if len(fila) != 8:
             raise ValueError("Cada fila de la matriz debe contener exactamente 8 bits.")
             
-        bin_str = "".join(map(str, fila))
-        
-      
-        byte_val = int(bin_str, 2)
-        
-     
+        bin_str = "".join(map(str, fila))           
+        byte_val = int(bin_str, 2)             
         byte_array_resultado.append(byte_val)
         
         
     return byte_array_resultado
+
 #------------------------UNIDAD 5 -------------------------
+
+    """Se normaliza la matriz dividiendo la fila por la suma de la misma 
+    """
 def normalizar_por_fila(matriz):
 
     for i in range(len(matriz)):
@@ -914,6 +959,14 @@ def normalizar_por_fila(matriz):
             for j in range(len(matriz[i])):
                 matriz[i][j] /= suma_fila
 
+    """
+    
+    Se obtienen los alfabetos de entrada y salida 
+Luego creo una matriz donde cada celda [i][j] se acumula  
+cuántas veces al ingresar ai(entrada) se obtuvo bj(salida).
+Luego normalizo la matriz 
+Devuelvo la matriz del canal P(b/a) 
+    """
 def mat_canal(entrada, salida):
     alf_entrada = sorted(list(set(entrada)))
     alf_salida = sorted(list(set(salida)))
@@ -927,14 +980,17 @@ def mat_canal(entrada, salida):
     normalizar_por_fila(mat)
     return mat
 
+    """se calcula la prob de salida en base a la formula sumatoria de P(ai)*P(bj/ai) uno por cada b iterando en a  tamaño(b)
 
+    """
 def Prob_de_b(probs_priori,probs_canal):
     probs_b=[0]*len(probs_canal[0])
     for j in range (len(probs_canal[0])):
         for i in range(len(probs_priori)):
             probs_b[j]+=probs_priori[i]*probs_canal[i][j]
     return probs_b
-
+    """se calcula la prob posteriori de la siguiente forma p(ai/bj)=(P(bj/ai)*P(ai))/P(bj) obteniendo una  matriz de tamaño A*B
+    """
 def Prob_posteriori(probs_priori,probs_canal):
     mat=[[0] * len(probs_canal[0]) for _ in range(len(probs_priori))]
     probs_b=Prob_de_b(probs_priori,probs_canal)
@@ -946,7 +1002,8 @@ def Prob_posteriori(probs_priori,probs_canal):
                 mat[i][j]=0
    
     return mat
-
+    """se calcula la prob simultanea de la siguiente formaP(ai,bi)=P(bj/ai)/P(ai)  obteniendo una  matriz de tamaño A*B
+    """
 def Prob_simultaneo(probs_priori,probs_canal):
      mat=[[0] * len(probs_canal[0]) for _ in range(len(probs_priori))]
      
@@ -955,6 +1012,10 @@ def Prob_simultaneo(probs_priori,probs_canal):
             mat[i][j]=(probs_canal[i][j]*probs_priori[i])
      return mat
 
+
+""" Es basicamente alcular una entropia por columna pero de la matriz de probabilidaes a posteriori=  sumatoria de P(a/bj)log(1/P(a/bj)) uno por cada b iterando en a, vector de tamaño(b)
+
+"""
 def entopia_posteriori(probs_priori,probs_canal):
     entropia=[]
     probs_posteriori=Prob_posteriori(probs_priori,probs_canal)
@@ -963,6 +1024,11 @@ def entopia_posteriori(probs_priori,probs_canal):
          entropia.append(entropia_base_2(columna,saca_INFO_base_2(columna)))
     
     return entropia
+
+
+    """ Primero se calcula la prob_simultanea y luego se utiliza en la siguiente formla para calcular la perdida, sumatoria de P(ai,bj)*log2(1/P(bj/ai))  iterando en a y b 
+    """
+
 def entropia_perdida(probs_priori,probs_canal):
     entropia =0
     
@@ -978,6 +1044,13 @@ def entropia_perdida(probs_priori,probs_canal):
                 entropia+=0
          
     return entropia
+
+
+
+
+    """Se calculan las prob dde salida y las entropias a  posteriori para usa en la siguiente formula sumatoria P(bj)*H(A/bj) iterando en b y sobre la entropía posteriori 
+
+    """
 def entropia_ruido(probs_priori,probs_canal):
     entropia =0
     entropia_post=entopia_posteriori(probs_priori,probs_canal)
@@ -988,6 +1061,8 @@ def entropia_ruido(probs_priori,probs_canal):
 
     return entropia
 
+""" Primero se calcula la prob_simultanea y luego se utiliza en la siguiente formla para calcular la perdida, sumatoria de P(ai,bi)*log)1/P(ai,bi) iterando en a y b 
+"""
 
 def entropia_afin(prob_a_priori,mat_canal):
     prob_simultanea=Prob_simultaneo(prob_a_priori,mat_canal)
@@ -1004,6 +1079,9 @@ def entropia_afin(prob_a_priori,mat_canal):
     
     return entropia
 
+"""se calcula la info mutua usando estas formula   H(A)-H(A/B)
+"""
+
 def info_mutua_a_b(probs_priori,probs_canal):
     entropia_entrada=entropia_base_2(probs_priori,saca_INFO_base_2(probs_priori))
     entropia_ruidosa=entropia_ruido(probs_priori,probs_canal)
@@ -1012,6 +1090,8 @@ def info_mutua_a_b(probs_priori,probs_canal):
     
     return entropia_entrada-entropia_ruidosa
 
+"""se calcula la info mutua usando estas formula   H(B)-H(B/A)
+"""
 def info_mutua_b_a(probs_priori,probs_canal):
     probs_b=Prob_de_b(probs_priori,probs_canal)
     entropia_salida=entropia_base_2(probs_b,saca_INFO_base_2(probs_b))
@@ -1022,17 +1102,21 @@ def info_mutua_b_a(probs_priori,probs_canal):
     return entropia_salida-entropia_perdidosa
 
 
-
+"""se calcula la info mutua usando esta formula   sumatoria P(ai,bj)*log2(P(ai/bj)/P(ai)) iterando en a y 
+"""
 def entropia_priori(probs_priori):
     return entropia_base_2(probs_priori,saca_INFO_base_2(probs_priori))
 
+"""Entropia clasica con los elementos de salida sumatoria de p(b)*log2(1/p(b))"""
 def entropia_salida(probs_priori,probs_canal):
     probs_sal=Prob_de_b(probs_priori,probs_canal)
     return entropia_base_2(probs_sal,saca_INFO_base_2(probs_sal))   
 
 
 #-----------------UNIDAD 6 --------------------------------
-
+    """Revisa la matriz del canal columna por columna. Si encuentra una columna (un símbolo de salida) que puede ser generada por más de una fila (más de un símbolo de entrada),
+    significa que el canal es "ruidoso" (hay pérdida de información) y devuelve False. Si todas las salidas provienen de una única entrada, devuelve True.
+    """
 
 def is_not_ruidosa(probs_canal):
     
@@ -1046,7 +1130,9 @@ def is_not_ruidosa(probs_canal):
     
 
     return True
-
+"""Revisa la matriz del canal fila por fila. 
+Si encuentra una fila (un símbolo de entrada) que puede generar más de una columna (más de un símbolo de salida), 
+significa que el canal no es determinista y devuelve False. Si cada entrada produce una única salida, devuelve True."""
 def is_determinante(probs_canal):
         
     for i in range (len(probs_canal)):
@@ -1060,7 +1146,9 @@ def is_determinante(probs_canal):
 
     return True
 
-
+    """Para calcular la matriz resultante de un canal en serie se calcula la Calcula la multiplicación de matrices estándar entre probs_canal_1 y probs_canal_2.
+    
+    """
 def mat_compuesta(probs_canal_1,probs_canal_2):
     mat_compuesta=[[0]*len(probs_canal_2[0]) for _ in range(len(probs_canal_1))]
     for i in range(len(probs_canal_1)):
@@ -1071,7 +1159,9 @@ def mat_compuesta(probs_canal_1,probs_canal_2):
 
 
    
-
+    """Comprueba si dos columnas de la matriz (indicadas por los índices j1 y j2) 
+    son linealmente dependientes. Es decir, verifica si una columna es simplemente un múltiplo constante de la otra (ej: Columna 1 = 0.5 * Columna 2). Devuelve True si lo son, False si no.
+    """
 def is_lineal(mat_canal,j1,j2):
     #verifica
    
@@ -1104,6 +1194,8 @@ def is_lineal(mat_canal,j1,j2):
 
     return True
 
+    """Se genera un amatriz identidad de tamaño B*B y se "suman" las columnas c1 y c2 eliminando c2 
+    """
 def genera_mat_det(mat,c1,c2):
     mat_compuesta = [[1 if i==j else 0 for j in range(len (mat[0]))] for i in range(len(mat[0]))]
     for fila in mat_compuesta:
@@ -1121,14 +1213,19 @@ def imprimir_matriz_normal(M):
         print(fila)
 
 
-
+    """Recorre todos los pares de columnas posibles de la matriz. Usa la función is_lineal para comprobar si algún par es linealmente dependiente.
+    Si encuentra un par, devuelve sus índices (i, j). Si revisa todos los pares y ninguno lo es, devuelve (-1, -1).
+    """
 def se_puede_reducir(mat):
     for i in range(len(mat[0])):
         for j in range(i+1,len(mat[0])):
             if is_lineal(mat,i,j):
                 return i,j
     return -1,-1
-
+    """Reduce la matriz del canal tanto como sea posible. Primero, busca un par de columnas reducibles (con se_puede_reducir). 
+    Si las encuentra, genera la matriz de fusión (con genera_mat_det) y calcula el nuevo canal reducido (con mat_compuesta). 
+    Repite este proceso en bucle hasta que no queden más columnas por fusionar.
+    """
 def genera_matriz_canal_reducido(mat,prob):
     i,j=se_puede_reducir(mat)
     print("Info mutua original ",info_mutua_a_b(prob,mat))
@@ -1144,6 +1241,8 @@ def genera_matriz_canal_reducido(mat,prob):
         
     return mat2
 
+"""Verifica si el canal es uniforme (o débilmente simétrico). Lo hace comprobando si todas las filas son permutaciones unas de otras. 
+Es decir, si ordenas los números de cada fila, todas las filas ordenadas deben ser idénticas"""
 def is_uniforme(matriz_canal):
    
     num_filas = len(matriz_canal)
@@ -1156,7 +1255,7 @@ def is_uniforme(matriz_canal):
         if fila_actual_ordenada != fila_referencia_ordenada:
             return False
     return True
-
+"""Calcula la capacidad del canal (la máxima información mutua). Utiliza fórmulas directas y eficientes si detecta que el canal es de un tipo especial: determinista, no ruidoso o uniforme."""
 def calcula_capacidad(mat_canal):
     capacidad=0
     if (is_determinante(mat_canal)):
@@ -1174,7 +1273,8 @@ def calcula_capacidad(mat_canal):
                 capacidad=0
         capacidad+=math.log2(len(mat_canal[0]))
     return capacidad
-
+"""Calcula la capacidad de un canal binario (2 entradas). Lo hace probando muchas distribuciones de probabilidad de entrada (ej: [0.1, 0.9], [0.2, 0.8], etc., según el paso).
+Calcula la información mutua para cada una y devuelve el valor máximo que encontró (la capacidad) y la probabilidad de entrada que la produjo."""
 
 def capacidad_binaria(mat_canal,paso):
     mutua=[]
@@ -1202,7 +1302,7 @@ def calcula_error(probs_priori,mat_canal):
 
 
 
-
+#-------------FALOPA----------------------------
 
 def paridad_impar_caracter(carat): #impar
     """
