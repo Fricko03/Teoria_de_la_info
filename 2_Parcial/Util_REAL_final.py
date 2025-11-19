@@ -641,6 +641,7 @@ def imprimir_bytearray_en_binario(datos_bytes):
     for byte_val in datos_bytes:
        
         octeto = bin(byte_val)[2:].zfill(8)
+        print(octeto)
         cadena_binaria += octeto
         
     return cadena_binaria
